@@ -1,6 +1,10 @@
 allow_embedding: false
-package_name: Material_Design_1
-name: Material Design 1
+package_name: VIS24
+name: VIS24
 startup_form: Form1
 runtime_options: {version: 2, client_version: '3', server_version: python3-full, server_spec: null}
-services: []
+metadata: {title: VIS24}
+services:
+- source: /runtime/services/tables.yml
+  client_config: {}
+  server_config: {}
