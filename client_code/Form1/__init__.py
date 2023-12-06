@@ -7,6 +7,8 @@ class Form1(Form1Template):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
+        self.plot_1.data = go.Bar(x=list(range(2, 40, 2)), y=list(range(2, 40, 2)), name='Example interactive plot')
+
         # Any code you write here will run before the form opens.
 
     def type_button_click(self, sender, **event_args):
