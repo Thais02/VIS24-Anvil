@@ -40,10 +40,14 @@ class Form1(Form1Template):
 
     def form_show(self, **event_args):
         with Notification('Fetching data...', title='Please wait'):
-            self.data = anvil.server.call('get_data')
-            self.refresh_map()
-            self.plot_map.redraw()
-            self.plot_bar.redraw()
+            try:
+                self.data = anvil.server.call('get_data_uplink')
+                Notification('Retrieved data from connected local source', title='Data fetched', style='success', timeout=6).show()
+            except:
+                self.data = anvil.server.call('get_data')
+        self.refresh_map()
+        self.plot_map.redraw()
+        self.plot_bar.redraw()
 
     def button_play_click(self, **event_args):
         if self.button_play.icon == 'fa:play':
