@@ -46,8 +46,13 @@ def get_iso(name):
 @anvil.server.callable
 def get_data():
     df_full = pd.read_csv('https://vis.thijsblom.xyz/_/theme/matches_1930_2022.csv')
-    
-    data = {}  # {year: (country_iso's, goals, country_names)}
+
+    # dictionary with years as keys. For each year has a tuple of:
+    # - list of the iso alpha_3 strings of the ALL countries (countries who did not participate/score get a value of 0)
+    # - list of the amount of goals made
+    # - list of the full country names, retrieved from pycountry for consistency
+    # - dictionary with country names as keys and amount of goals as values, for the top-5 only
+    data = {}  # {year: (country_iso's, goals, country_names, {country_name: goals})}
     
     for year in range(1930, 2022+1, 4):
         df = df_full[df_full['Date'].str.contains(str(year))]
