@@ -45,6 +45,7 @@ def get_iso(name):
 
 @anvil.server.callable
 def get_data():
+    blacklist = ['ATA']
     df_full = pd.read_csv('https://vis.thijsblom.xyz/_/theme/matches_1930_2022.csv')
 
     # dictionary with years as keys. For each year has a tuple of:
@@ -73,9 +74,10 @@ def get_data():
             list_goals.append(num_goals)
             list_countries.append(pycountry.countries.get(alpha_3=iso).name)
         for country in pycountry.countries:
-            list_iso.append(country.alpha_3)
-            list_goals.append(goals.get(country.alpha_3, 0))
-            list_countries.append(country.name)
+            if country.alpha_3 not in blacklist:
+                list_iso.append(country.alpha_3)
+                list_goals.append(goals.get(country.alpha_3, 0))
+                list_countries.append(country.name)
         top5 = {}
         for iso, goals in Counter(goals).most_common(5):
             top5[pycountry.countries.get(alpha_3=iso).name] = goals
