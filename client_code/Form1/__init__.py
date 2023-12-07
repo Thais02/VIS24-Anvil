@@ -8,13 +8,13 @@ class Form1(Form1Template):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
-        # self.plot_1.data = go.Bar(x=list(range(2, 40, 2)), y=list(range(2, 40, 2)), name='Example interactive plot')
+        self.plot_bar.data = go.Bar(x=[20, 15, 10, 3], y=['USA', 'UK', 'Germany', 'Brazil'], name='Top 5', orientation='h')
         locs, z, countries = anvil.server.call('get_data')
         self.plot_map.data = go.Choropleth(locations=locs, z=z, text=countries,
                     title='Total amount of goals scored per country',
-                    colorscale = 'Blues',
+                    colorscale = 'Reds',
                     autocolorscale=False,
-                    reversescale=True,
+                    reversescale=False,
                     marker_line_color='darkgray',
                     marker_line_width=0.5,
                     # colorbar_tickprefix = '$',
