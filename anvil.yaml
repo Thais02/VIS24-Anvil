@@ -3,6 +3,10 @@ package_name: VIS24
 name: VIS24
 startup_form: Form1
 runtime_options: {version: 2, client_version: '3', server_version: python3-full, server_spec: null}
+dependencies:
+- dep_id: dep_dsp2asfwv0ieo
+  version: {dev: false}
+  resolution_hints: {app_id: HPFTAY3BRQAZPIX2, name: Slider Component, package_name: Slider}
 metadata: {title: VIS24}
 services:
 - source: /runtime/services/tables.yml

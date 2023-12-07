@@ -8,114 +8,27 @@ components:
   name: content_panel
   layout_properties: {slot: default}
   components:
-  - name: card_1
-    properties: {role: card}
-    type: ColumnPanel
-    layout_properties: {grid_position: 'WZHECG,DPQDSR'}
-    components:
-    - name: button_vs
-      properties: {text: Team comparison, role: primary-color}
-      type: Button
-      layout_properties: {grid_position: 'ZAXPYJ,QENBGN'}
-      event_bindings: {click: type_button_click}
-    - name: button_poule
-      properties: {text: Poule analyser, enabled: true}
-      type: Button
-      layout_properties: {grid_position: 'ZAXPYJ,MRGRWK'}
-      event_bindings: {click: type_button_click}
-    - name: button_hist
-      properties: {text: Team tracker}
-      type: Button
-      layout_properties: {grid_position: 'ZAXPYJ,UNCKMD'}
-      event_bindings: {click: type_button_click}
-  - name: card_vs
-    properties: {role: card}
-    type: ColumnPanel
-    layout_properties: {grid_position: 'QUXFDV,NCPWVW'}
-    components:
-    - name: drop_down_1
-      properties:
-        include_placeholder: true
-        items: [Germany, Brazil]
-        placeholder: Team 1
-      type: DropDown
-      layout_properties: {grid_position: 'XETCEZ,RXPDIQ'}
-    - name: label_1
-      properties: {text: VS, align: center}
-      type: Label
-      layout_properties: {grid_position: 'XETCEZ,CCLJQK'}
-    - name: drop_down_2
-      properties:
-        include_placeholder: true
-        items: [Germany, Brazil]
-        placeholder: Team 2
-      type: DropDown
-      layout_properties: {grid_position: 'XETCEZ,QUQPFQ'}
-    - name: check_box_1
-      properties: {text: Average ball possession, allow_indeterminate: false}
-      type: CheckBox
-      layout_properties: {grid_position: 'TDCDZI,NJKEEE'}
-    - name: check_box_2
-      properties: {text: scored goals}
-      type: CheckBox
-      layout_properties: {grid_position: 'TDCDZI,UNLVVS'}
-    - name: check_box_3
-      properties: {text: average player age}
-      type: CheckBox
-      layout_properties: {grid_position: 'TDCDZI,NTRHZG'}
-    data_bindings:
-    - {property: visible, code: self.button_vs.role == 'primary-color', writeback: false}
-  - name: card_poule
-    properties: {role: card}
-    type: ColumnPanel
-    layout_properties: {grid_position: 'RAGLJM,IVCTJS'}
-    components:
-    - name: drop_down_3
-      properties: {placeholder: Team 1, include_placeholder: true}
-      type: DropDown
-      layout_properties: {grid_position: 'BFTFJF,VGPESN'}
-    - name: drop_down_4
-      properties: {placeholder: Team 2, include_placeholder: true}
-      type: DropDown
-      layout_properties: {grid_position: 'BFTFJF,YNNGQR'}
-    - name: drop_down_5
-      properties: {placeholder: Team 3, include_placeholder: true}
-      type: DropDown
-      layout_properties: {grid_position: 'BFTFJF,CLSSHE'}
-    - name: drop_down_6
-      properties: {placeholder: Team 4, include_placeholder: true}
-      type: DropDown
-      layout_properties: {grid_position: 'BFTFJF,TSODRY'}
-    - name: label_2
-      properties: {text: idk what to put here tbh, foreground: 'theme:Secondary 500',
-        align: center, bold: false, italic: false, underline: false}
-      type: Label
-      layout_properties: {grid_position: 'MMKPGC,PHKVIC'}
-    data_bindings:
-    - {property: visible, code: self.button_poule.role == 'primary-color', writeback: false}
-  - name: card_hist
-    properties: {role: card}
-    type: ColumnPanel
-    layout_properties: {grid_position: 'JBBGEL,EXYATP'}
-    data_bindings:
-    - {property: visible, code: self.button_hist.role == 'primary-color', writeback: false}
-    components:
-    - name: drop_down_7
-      properties: {include_placeholder: true, placeholder: Team}
-      type: DropDown
-      layout_properties: {grid_position: 'SQZOVP,OZDNGH'}
-    - name: date_picker_1
-      properties: {placeholder: Start}
-      type: DatePicker
-      layout_properties: {grid_position: 'GSXIFS,EOIMSC'}
-    - name: date_picker_2
-      properties: {placeholder: End}
-      type: DatePicker
-      layout_properties: {grid_position: 'GSXIFS,FOSVEI'}
-  - name: plot_1
+  - name: plot_map
     properties: {}
     type: Plot
     layout_properties: {grid_position: 'TCXARF,PMMBSW'}
+  - name: card_2
+    properties: {role: card}
+    type: ColumnPanel
+    layout_properties: {grid_position: 'TCXARF,HNFRUX'}
+  - name: card_1
+    properties: {role: card}
+    type: ColumnPanel
+    layout_properties: {grid_position: 'BNEORQ,JRUDVE'}
+    components:
+    - name: date_picker_1
+      properties: {placeholder: Start year}
+      type: DatePicker
+      layout_properties: {grid_position: 'SMJAAK,QUALSG'}
+    - name: date_picker_2
+      properties: {placeholder: End year}
+      type: DatePicker
+      layout_properties: {grid_position: 'SMJAAK,IUESDL'}
 - type: FlowPanel
   properties: {}
   name: navbar_links

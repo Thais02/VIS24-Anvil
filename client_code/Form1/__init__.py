@@ -10,9 +10,16 @@ class Form1(Form1Template):
 
         # self.plot_1.data = go.Bar(x=list(range(2, 40, 2)), y=list(range(2, 40, 2)), name='Example interactive plot')
         locs, z = anvil.server.call('get_data')
-        self.plot_1.data = go.Choropleth(locations=locs, z=z,
-                    projection='natural earth',
-                    title='GDP per Capita by Country')
+        self.plot_map.data = go.Choropleth(locations=locs, z=z,
+                    # projection='natural earth',
+                    title='GDP per Capita by Country',
+                    colorscale = 'Blues',
+                    autocolorscale=False,
+                    reversescale=True,
+                    marker_line_color='darkgray',
+                    marker_line_width=0.5,
+                    colorbar_tickprefix = '$',
+                    colorbar_title = 'GDP<br>Billions US$')
         # Any code you write here will run before the form opens.
 
     def type_button_click(self, sender, **event_args):
