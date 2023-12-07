@@ -4,31 +4,44 @@ container:
   properties: {html: '@theme:standard-page.html'}
 components:
 - type: ColumnPanel
-  properties: {}
+  properties: {col_widths: '{"SXRZCO":40,"CDBEQB":20}'}
   name: content_panel
   layout_properties: {slot: default}
   components:
-  - name: plot_map
-    properties: {}
-    type: Plot
-    layout_properties: {grid_position: 'TCXARF,PMMBSW'}
+  - name: card_3
+    properties: {role: card, col_spacing: none}
+    type: ColumnPanel
+    layout_properties: {grid_position: 'ANSSAX,SXRZCO DCXJRU,SWUVTO', full_width_row: true}
+    components:
+    - name: plot_map
+      properties: {spacing_above: none, spacing_below: none, height: '600'}
+      type: Plot
+      layout_properties: {grid_position: 'CQZPOA,QOKRGL', full_width_row: true}
   - name: card_2
     properties: {role: card}
     type: ColumnPanel
-    layout_properties: {grid_position: 'TCXARF,HNFRUX'}
+    layout_properties: {grid_position: 'ANSSAX,CDBEQB', full_width_row: true}
+    components:
+    - name: plot_bar
+      properties: {height: '600', spacing_above: none, spacing_below: none}
+      type: Plot
+      layout_properties: {grid_position: 'CVFXOR,HCVPNV', full_width_row: true}
   - name: card_1
     properties: {role: card}
     type: ColumnPanel
-    layout_properties: {grid_position: 'BNEORQ,JRUDVE'}
+    layout_properties: {grid_position: 'ANSSAX,SXRZCO'}
     components:
-    - name: date_picker_1
-      properties: {placeholder: Start year}
-      type: DatePicker
-      layout_properties: {grid_position: 'SMJAAK,QUALSG'}
-    - name: date_picker_2
-      properties: {placeholder: End year}
-      type: DatePicker
-      layout_properties: {grid_position: 'SMJAAK,IUESDL'}
+    - name: label_1
+      properties: {align: center, bold: false, font_size: 20}
+      type: Label
+      layout_properties: {grid_position: 'RRWTVF,ZWOSYU'}
+      data_bindings:
+      - {property: text, code: int(self.slider_1.level), writeback: false}
+    - name: slider_1
+      properties: {step: 4, slider_max: 2022, slider_min: 1930, level: 1930}
+      type: form:dep_dsp2asfwv0ieo:Slider
+      layout_properties: {grid_position: 'HLHBNT,CJMMML'}
+      event_bindings: {change: slider_1_change}
 - type: FlowPanel
   properties: {}
   name: navbar_links
