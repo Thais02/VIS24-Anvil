@@ -7,6 +7,9 @@ dependencies:
 - dep_id: dep_dsp2asfwv0ieo
   version: {dev: false}
   resolution_hints: {app_id: HPFTAY3BRQAZPIX2, name: Slider Component, package_name: Slider}
+- dep_id: dep_ld9bkyex0y6t8
+  version: {dev: false}
+  resolution_hints: {app_id: C6ZZPAPN4YYF5NVJ, name: Anvil Extras, package_name: anvil_extras}
 metadata: {title: VIS24}
 services:
 - source: /runtime/services/tables.yml
