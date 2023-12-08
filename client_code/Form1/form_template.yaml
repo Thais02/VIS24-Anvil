@@ -99,12 +99,12 @@ components:
       type: Label
       layout_properties: {grid_position: 'LHJBJN,TEZNNO'}
     - name: autocolorscale
-      properties: {text: map.autocolorscale, checked: true}
+      properties: {text: autocolorscale, checked: true}
       type: CheckBox
       layout_properties: {grid_position: 'ZOWZNC,JWRACM'}
       event_bindings: {change: debug_setting_change}
     - name: reversescale
-      properties: {text: map.reversescale}
+      properties: {text: reversescale}
       type: CheckBox
       layout_properties: {grid_position: 'XRCQOZ,CBMYOE'}
       event_bindings: {change: debug_setting_change}
