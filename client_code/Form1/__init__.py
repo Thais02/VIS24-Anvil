@@ -7,8 +7,6 @@ from collections import Counter
 
 class Form1(Form1Template):
     def __init__(self, **properties):
-        # Set Form properties and Data Bindings.
-        self.init_components(**properties)
         self.data = {}
         self.cmin = 99999
         self.cmax = -99999
@@ -19,7 +17,7 @@ class Form1(Form1Template):
             'plot_map_layout_title': 'Total amount of goals scored per country',
             'plot_bar_layout_title': 'Top 5'
         }
-        # Any code you write here will run before the form opens.
+        self.init_components(**properties)
 
     def get_data(self):
         self.call_js('hideSidebar')
@@ -44,19 +42,22 @@ class Form1(Form1Template):
         self.slider_single.enabled = True
         self.checkbox_multiselect.enabled = True
         self.button_play.enabled = True
+        self.refresh_data_bindings()
         self.refresh_map()
     
     def refresh_map(self):
+        self.refresh_data_bindings()
         if self.checkbox_multiselect.checked:
             data = {}
             iso_to_name = {}
             for year in range(int(self.slider_multi.values[0]), int(self.slider_multi.values[1])+1, 4):
-                isos, nums, countries, top5 = self.data[str(year)]
-                for iso, num, country in zip(isos, nums, countries):
-                    lst = data.get(iso, [])
-                    lst.append(num)
-                    data[iso] = lst
-                    iso_to_name[iso] = country
+                if year not in [1942, 1946]:
+                    isos, nums, countries, top5 = self.data[str(year)]
+                    for iso, num, country in zip(isos, nums, countries):
+                        lst = data.get(iso, [])
+                        lst.append(num)
+                        data[iso] = lst
+                        iso_to_name[iso] = country
             isos = list(data.keys())
             nums = [sum(val)/len(val) for val in data.values()]
             countries = [iso_to_name[iso] for iso in data.keys()]
@@ -96,6 +97,7 @@ class Form1(Form1Template):
         self.plot_map.data = map
         
         self.plot_bar.layout.title = self.config.get('plot_bar_layout_title', '[untitled]')
+        self.plot_bar.layout.xaxis.range = [self.cmin, self.cmax]
         self.plot_bar.data = bars
     
     def form_show(self, **event_args):
@@ -125,7 +127,6 @@ class Form1(Form1Template):
         self.slider_single_change(None)
 
     def slider_single_change(self, handle, **event_args):
-        self.refresh_data_bindings()
         self.refresh_map()
 
     def checkbox_multiselect_change(self, **event_args):
@@ -144,9 +145,6 @@ class Form1(Form1Template):
         self.slider_single_change(None)
 
     def debug_setting_change(self, **event_args):
-        self.config['reversescale'] = self.reversescale.checked
-        self.config['colorscale'] = self.colorscale.text
-        self.refresh_data_bindings()
         self.refresh_map()
 
     def radio_change(self, **event_args):

@@ -75,9 +75,9 @@ def get_data(vis_name):
                 list_goals.append(num_goals)
                 list_countries.append(pycountry.countries.get(alpha_3=iso).name)
             for country in pycountry.countries:
-                if country.alpha_3 not in blacklist:
+                if country.alpha_3 not in blacklist and country.alpha_3 not in list_iso:
                     list_iso.append(country.alpha_3)
-                    list_goals.append(goals.get(country.alpha_3, 0))
+                    list_goals.append(0)
                     list_countries.append(country.name)
             top5 = {}
             for iso, goals in Counter(goals).most_common(5):
