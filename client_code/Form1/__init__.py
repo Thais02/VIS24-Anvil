@@ -8,6 +8,7 @@ from collections import Counter
 class Form1(Form1Template):
     def __init__(self, **properties):
         self.data = {}
+        self.general_data = {}
         self.cmin = 99999
         self.cmax = -99999
         self.config = {
@@ -30,9 +31,9 @@ class Form1(Form1Template):
             try:
                 anvil.server.call('ping_uplink')
             except:
-                self.data, config = anvil.server.call('get_data', vis_name=self.radio_goals.get_group_value())
+                self.data, config, self.general_data = anvil.server.call('get_data', vis_name=self.radio_goals.get_group_value())
             else:
-                self.data, config = anvil.server.call('get_data_uplink', vis_name=self.radio_goals.get_group_value())
+                self.data, config, self.general_data = anvil.server.call('get_data_uplink', vis_name=self.radio_goals.get_group_value())
                 Notification('Retrieved data from connected local source', title='Data fetched', style='success', timeout=6).show()
             if config:
                 self.config = config
@@ -99,6 +100,10 @@ class Form1(Form1Template):
         self.plot_bar.layout.title = self.config.get('plot_bar_layout_title', '[untitled]')
         self.plot_bar.layout.xaxis.range = [self.cmin, self.cmax]
         self.plot_bar.data = bars
+
+        self.rich_text_side.content = '|  |  |\n| --- | --- |\n'
+        for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
+            self.rich_text_side.content += f'| {key} | {value} |\n'
     
     def form_show(self, **event_args):
         self.call_js('hideSidebar')

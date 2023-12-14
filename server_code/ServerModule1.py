@@ -84,7 +84,9 @@ def get_data(vis_name):
                 top5[pycountry.countries.get(alpha_3=iso).name] = goals
         
             data[str(year)] = (list_iso, list_goals, list_countries, top5)
+
+        general_data = pd.read_csv('https://vis.thijsblom.xyz/_/theme/world_cup.csv').set_index('Year')
         
-        return data, None
+        return data, None, general_data.set_index(general_data.index.astype(str)).to_dict('index')
     else:
         raise Exception('Not implemented by server')
