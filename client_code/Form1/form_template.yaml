@@ -55,11 +55,25 @@ components:
     type: ColumnPanel
     layout_properties: {grid_position: 'RPBTWN,DYNAXB', full_width_row: true}
     components:
-    - name: checkbox_multiselect
-      properties: {text: Multi-select, checked: false, enabled: false}
-      type: CheckBox
-      layout_properties: {grid_position: 'NKQLQE,SGNNYP'}
-      event_bindings: {change: checkbox_multiselect_change}
+    - name: richtext_multi_select
+      properties: {content: '{checkbox} {dropdown}', align: left}
+      type: RichText
+      layout_properties: {grid_position: 'HNYBSO,ATTWSF', full_width_row: false}
+      components:
+      - name: checkbox_multiselect
+        properties: {text: Multi-select, checked: false, enabled: false, align: center,
+          spacing_above: none, spacing_below: none}
+        type: CheckBox
+        layout_properties: {slot: checkbox}
+        event_bindings: {change: checkbox_multiselect_change}
+      - name: dropdown_multiselect
+        properties:
+          items: [show average, show difference]
+          spacing_above: none
+          spacing_below: none
+        type: DropDown
+        layout_properties: {slot: dropdown}
+        event_bindings: {change: dropdown_multiselect_change}
     - name: spacer_1
       properties: {height: '20'}
       type: Spacer
