@@ -67,7 +67,22 @@ class Form1(Form1Template):
                 for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common(5):
                     top5[iso_to_name[iso]] = num
             elif self.dropdown_multiselect.selected_value == 'show difference':
-                
+                data = {}
+                iso_to_name = {}
+                for year in range(int(self.slider_multi.values[0]), int(self.slider_multi.values[1])+1, 4):
+                    if year not in [1942, 1946]:
+                        isos, nums, countries, top5 = self.data[str(year)]
+                        for iso, num, country in zip(isos, nums, countries):
+                            lst = data.get(iso, [])
+                            lst.append(num)
+                            data[iso] = lst
+                            iso_to_name[iso] = country
+                isos = list(data.keys())
+                nums = [sum(val)/len(val) for val in data.values()]
+                countries = [iso_to_name[iso] for iso in data.keys()]
+                top5 = {}
+                for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common(5):
+                    top5[iso_to_name[iso]] = num
         else:
             isos, nums, countries, top5 = self.data[str(int(self.slider_single.value))]
         
