@@ -41,15 +41,6 @@ components:
       properties: {}
       type: RichText
       layout_properties: {grid_position: 'SRWHWC,HGZORL'}
-    - name: label_2
-      properties: {text: 'TODO
-
-          - beetje mooier maken :)
-
-          - laten werken met multi-select (denk gemiddeldes van getallen pakken, rest
-          weglaten?)', icon: '', foreground: 'theme:Primary 500', background: ''}
-      type: Label
-      layout_properties: {grid_position: 'IPGHQA,YZODQY'}
   - name: card_1
     properties: {role: card}
     type: ColumnPanel
@@ -71,6 +62,7 @@ components:
           items: [show average, show difference]
           spacing_above: none
           spacing_below: none
+          enabled: false
         type: DropDown
         layout_properties: {slot: dropdown}
         event_bindings: {change: dropdown_multiselect_change}
