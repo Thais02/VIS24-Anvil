@@ -18,6 +18,7 @@ components:
       properties: {spacing_above: none, spacing_below: none, height: '700'}
       type: Plot
       layout_properties: {grid_position: 'CQZPOA,QOKRGL', full_width_row: true}
+      event_bindings: {click: plot_map_click}
   - name: timer
     properties: {interval: 0}
     type: Timer
@@ -38,9 +39,9 @@ components:
     layout_properties: {grid_position: 'ANSSAX,LXCHPM NDRNXU,YQLQTF'}
     components:
     - name: rich_text_side
-      properties: {}
+      properties: {spacing_above: none, spacing_below: none}
       type: RichText
-      layout_properties: {grid_position: 'SRWHWC,HGZORL'}
+      layout_properties: {grid_position: 'SRWHWC,HGZORL', full_width_row: true}
   - name: card_1
     properties: {role: card}
     type: ColumnPanel

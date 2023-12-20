@@ -79,7 +79,7 @@ class Form1(Form1Template):
                 top5 = {}
                 for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common(5):
                     top5[iso_to_name[iso]] = num
-                self.rich_text_side.content = '|  |  |\n| --- | --- |\n'
+                self.rich_text_side.content = '|  |  |\n| --- | ---: |\n'
                 for key, value in general_data.items():
                     self.rich_text_side.content += f'| **{key}** | {int(sum(value)/len(value))} |\n'
             elif self.dropdown_multiselect.selected_value == 'show difference':
@@ -104,7 +104,7 @@ class Form1(Form1Template):
                     top5[iso_to_name[iso]] = num
                 for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common()[-5:]:
                     top5[iso_to_name[iso]] = num
-                self.rich_text_side.content = '|  |  |\n| --- | --- |\n'
+                self.rich_text_side.content = '|  |  |\n| --- | ---: |\n'
                 for (key, value1), (_, value2) in zip(self.general_data.get(str(int(self.slider_multi.values[0])), {}).items(),
                                      self.general_data.get(str(int(self.slider_multi.values[1])), {}).items()):
                     if key in ['Teams', 'Attendance', 'AttendanceAvg', 'Matches']:
@@ -114,7 +114,7 @@ class Form1(Form1Template):
             if self.custom_cmin_cmax:
                 self.reset_cmin_cmax()
             isos, nums, countries, top5 = self.data[str(int(self.slider_single.value))]
-            self.rich_text_side.content = '|  |  |\n| --- | --- |\n'
+            self.rich_text_side.content = '|  |  |\n| --- | ---: |\n'
             for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
                 self.rich_text_side.content += f'| **{key}** | {value} |\n'
         
@@ -150,13 +150,14 @@ class Form1(Form1Template):
                         'cmax': self.cmax,
         })
         
-        self.plot_map.layout.geo = {'showframe': False, 'showcoastlines': False, 'projection_type': 'equirectangular'}
+        self.plot_map.layout.geo = {'showframe': True, 'showcoastlines': False, 'projection_type': 'mercator'}
         self.plot_map.layout.title = self.config.get('plot_map_layout_title', '[untitled]')
         if self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show average':
             self.plot_map.layout.title += f'<br>Average between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
         elif self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show difference':
             self.plot_map.layout.title += f'<br>Difference between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
         self.plot_map.data = map
+        
         
         self.plot_bar.layout.title = self.config.get('plot_bar_layout_title', '[untitled]')
         self.plot_bar.layout.xaxis.range = [self.cmin, self.cmax]
@@ -216,3 +217,8 @@ class Form1(Form1Template):
 
     def radio_change(self, **event_args):
         self.get_data()
+
+    def plot_map_click(self, points, **event_args):
+        print(points)
+        isos, _, _, _ = self.data['1930']
+        print(isos[int(points[0]['point_number'])])
