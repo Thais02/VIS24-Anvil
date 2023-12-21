@@ -12,6 +12,7 @@ class Form1(Form1Template):
         self.cmin = 99999
         self.cmax = -99999
         self.custom_cmin_cmax = False
+        self.prev_richtext = ''
         self.config = {
             'colorscale': 'Reds',
             'reversescale': False,
@@ -49,7 +50,7 @@ class Form1(Form1Template):
         for isos, nums, countries, top5 in self.data.values():
                 self.cmin = min(self.cmin, min(nums))
                 self.cmax = max(self.cmax, max(nums))
-    
+        
     def refresh_map(self):
         self.refresh_data_bindings()
         self.plot_bar.height = 300
@@ -222,3 +223,18 @@ class Form1(Form1Template):
         print(points)
         isos, _, _, _ = self.data['1930']
         print(isos[int(points[0]['point_number'])])
+
+    def plot_map_hover(self, points, **event_args):
+        index = points[0]['point_number']
+        year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
+        
+        self.prev_richtext = self.rich_text_side.content
+        
+        isos, nums, countries, _ = self.data[str(year)]
+            
+        self.rich_text_side.content = f'|{countries[index]}|{year}|\n| --- | ---: |\n'
+        for key, value in {'Team manager': 'idfk', 'Team captain': 'no clue'}.items():
+            self.rich_text_side.content += f'| **{key}** | {value} |\n'
+
+    def plot_map_unhover(self, points, **event_args):
+        self.rich_text_side.content = self.prev_richtext
