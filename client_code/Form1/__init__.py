@@ -31,9 +31,9 @@ class Form1(Form1Template):
             try:
                 anvil.server.call('ping_uplink')
             except:
-                self.data, config, self.general_data = anvil.server.call('get_data', vis_name=self.radio_goals.get_group_value())
+                self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data', vis_name=self.radio_goals.get_group_value())
             else:
-                self.data, config, self.general_data = anvil.server.call('get_data_uplink', vis_name=self.radio_goals.get_group_value())
+                self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data_uplink', vis_name=self.radio_goals.get_group_value())
                 Notification('Retrieved data from connected local source', title='Data fetched', style='success', timeout=6).show()
             if config:
                 self.config = config
@@ -233,7 +233,7 @@ class Form1(Form1Template):
         isos, nums, countries, _ = self.data[str(year)]
             
         self.rich_text_side.content = f'|{countries[index]}|{year}|\n| --- | ---: |\n'
-        for key, value in {'Team manager': 'idfk', 'Team captain': 'no clue'}.items():
+        for key, value in self.country_stats[str(year)][isos[index]].items():
             self.rich_text_side.content += f'| **{key}** | {value} |\n'
 
     def plot_map_unhover(self, points, **event_args):
