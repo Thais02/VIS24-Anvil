@@ -221,11 +221,6 @@ class Form1(Form1Template):
     def radio_change(self, **event_args):
         self.get_data()
 
-    def plot_map_click(self, points, **event_args):
-        print(points)
-        isos, _, _, _ = self.data['1930']
-        print(isos[int(points[0]['point_number'])])
-
     def plot_map_hover(self, points, **event_args):
         index = points[0]['point_number']
         year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
