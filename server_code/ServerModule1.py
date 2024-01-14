@@ -42,6 +42,52 @@ def get_iso(name):
         iso = isos.get(name)
     return iso
 
+def get_country_stats(df_full):
+    data = {}  # {year: {country_iso: {keys: values}}}
+
+    for year in range(1930, 2022 + 1, 4):
+        year_dict = {}
+
+        df = df_full[df_full['Year'] == year]
+
+        # count the total number of matches played by each country this year
+        counter_home = Counter(df['home_team'])
+        counter_away = Counter(df['away_team'])
+        all_country_names = set(counter_home.keys()).union(set(counter_away.keys()))
+
+        for country_name in all_country_names:
+            # find team manager and captain, assumes consistency within year
+            try:
+                row = df[df['away_team'] == country_name].iloc[0]
+            except:
+                row = df[df['away_team'] == country_name]
+            manager = row['away_manager']
+            captain = row['away_captain']
+            if not isinstance(manager, str):
+                try:
+                    row = df[df['home_team'] == country_name].iloc[0]
+                except:
+                    row = df[df['home_team'] == country_name]
+                manager = row['home_manager']
+                captain = row['home_captain']
+
+            country_dict = {'Total matches': counter_home.get(country_name, 0) + counter_away.get(country_name, 0),
+                            'Home matches': counter_home.get(country_name, 0),
+                            'Away matches': counter_away.get(country_name, 0),
+                            'Team manager': manager,
+                            'Team captain': captain
+                            }
+
+            year_dict[get_iso(country_name)] = country_dict
+
+        # add all other countries with N/A data
+        for country in pycountry.countries:
+            if country.alpha_3 not in year_dict:
+                year_dict[country.alpha_3] = {'Did not participate': ''}
+
+        data[str(year)] = year_dict
+
+    return data
 
 @anvil.server.callable
 def get_data(vis_name):
@@ -86,7 +132,8 @@ def get_data(vis_name):
             data[str(year)] = (list_iso, list_goals, list_countries, top5)
 
         general_data = pd.read_csv('https://vis.thijsblom.xyz/_/theme/world_cup.csv').set_index('Year')
+        country_stats = get_country_stats(df_full)
         
-        return data, None, general_data.set_index(general_data.index.astype(str)).to_dict('index')
+        return data, None, general_data.set_index(general_data.index.astype(str)).to_dict('index'), country_stats
     else:
         raise Exception('Not implemented by server')
