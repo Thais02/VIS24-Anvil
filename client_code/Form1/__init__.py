@@ -61,7 +61,8 @@ class Form1(Form1Template):
                 data = {}
                 general_data = {}
                 iso_to_name = {}
-                for year in range(int(self.slider_multi.values[0]), int(self.slider_multi.values[1])+1, 4):
+                year_range = range(int(self.slider_multi.values[0]), int(self.slider_multi.values[1])+1, 4)
+                for year in year_range:
                     if year not in [1942, 1946]:
                         isos, nums, countries, _ = self.data[str(year)]
                         for iso, num, country in zip(isos, nums, countries):
@@ -80,7 +81,8 @@ class Form1(Form1Template):
                 top5 = {}
                 for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common(5):
                     top5[iso_to_name[iso]] = num
-                self.rich_text_side.content = '|  |  |\n| --- | ---: |\n'
+                year_range = list(year_range)
+                self.rich_text_side.content = f'|FIFA World Cup|{year_range[0]} - {year_range[-1]}|\n| --- | ---: |\n'
                 for key, value in general_data.items():
                     self.rich_text_side.content += f'| **{key}** | {int(sum(value)/len(value))} |\n'
             elif self.dropdown_multiselect.selected_value == 'show difference':
@@ -105,7 +107,7 @@ class Form1(Form1Template):
                     top5[iso_to_name[iso]] = num
                 for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common()[-5:]:
                     top5[iso_to_name[iso]] = num
-                self.rich_text_side.content = '|  |  |\n| --- | ---: |\n'
+                self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_multi.values[0])} - {int(self.slider_multi.values[1])}|\n| --- | ---: |\n'
                 for (key, value1), (_, value2) in zip(self.general_data.get(str(int(self.slider_multi.values[0])), {}).items(),
                                      self.general_data.get(str(int(self.slider_multi.values[1])), {}).items()):
                     if key in ['Teams', 'Attendance', 'AttendanceAvg', 'Matches']:
@@ -115,7 +117,7 @@ class Form1(Form1Template):
             if self.custom_cmin_cmax:
                 self.reset_cmin_cmax()
             isos, nums, countries, top5 = self.data[str(int(self.slider_single.value))]
-            self.rich_text_side.content = '|  |  |\n| --- | ---: |\n'
+            self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_single.value)}|\n| --- | ---: |\n'
             for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
                 self.rich_text_side.content += f'| **{key}** | {value} |\n'
         
