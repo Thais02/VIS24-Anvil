@@ -41,7 +41,6 @@ class Form1(Form1Template):
         self.slider_single.enabled = True
         self.checkbox_multiselect.enabled = True
         self.button_play.enabled = True
-        self.plot_map.config = {'editable': True}
         self.plot_map.layout.uirevision = True
         self.plot_map.layout.selectionrevision = True
         self.plot_map.layout.editrevision = True
@@ -146,7 +145,7 @@ class Form1(Form1Template):
                     marker_line_width = 0.5,
                     zmin = self.cmin,
                     zmax = self.cmax,
-                    uid=420,
+                    uid=420, uirevision=True,
                     colorbar_title = self.config.get('colorbar_title'))
         bars = go.Bar(x=top5_x, y=top5_y,
                       orientation='h',
