@@ -5,6 +5,15 @@ import plotly.graph_objects as go
 
 from collections import Counter
 
+continents = {'World': [], None: [], '{custom selection}': [],
+        	  'North America': ['ABW', 'AIA', 'ATG', 'BES', 'BHS', 'BLM', 'BLZ', 'BMU', 'BRB', 'CAN', 'CRI', 'CUB', 'CUW', 'CYM', 'DMA', 'DOM', 'GLP', 'GRD', 'GRL', 'GTM', 'HND', 'HTI', 'JAM', 'KNA', 'LCA', 'MAF', 'MEX', 'MSR', 'MTQ', 'NIC', 'PAN', 'PRI', 'SLV', 'SPM', 'TCA', 'TTO', 'USA', 'VCT', 'VGB', 'VIR'],
+              'Asia': ['AFG', 'ARE', 'ARM', 'AZE', 'BGD', 'BHR', 'BRN', 'BTN', 'CCK', 'CHN', 'CXR', 'CYP', 'GEO', 'HKG', 'IDN', 'IND', 'IOT', 'IRN', 'IRQ', 'ISR', 'JOR', 'JPN', 'KAZ', 'KGZ', 'KHM', 'KOR', 'KWT', 'LAO', 'LBN', 'LKA', 'MAC', 'MDV', 'MMR', 'MNG', 'MYS', 'NPL', 'OMN', 'PAK', 'PHL', 'PRK', 'PSE', 'QAT', 'SAU', 'SGP', 'SYR', 'THA', 'TJK', 'TKM', 'TUR', 'TWN', 'UZB', 'VNM', 'YEM'],
+              'Africa': ['AGO', 'BDI', 'BEN', 'BFA', 'BWA', 'CAF', 'CIV', 'CMR', 'COD', 'COG', 'COM', 'CPV', 'DJI', 'DZA', 'EGY', 'ERI', 'ETH', 'GAB', 'GHA', 'GIN', 'GMB', 'GNB', 'GNQ', 'KEN', 'LBR', 'LBY', 'LSO', 'MAR', 'MDG', 'MLI', 'MOZ', 'MRT', 'MUS', 'MWI', 'MYT', 'NAM', 'NER', 'NGA', 'REU', 'RWA', 'SDN', 'SEN', 'SHN', 'SLE', 'SOM', 'SSD', 'STP', 'SWZ', 'SYC', 'TCD', 'TGO', 'TUN', 'TZA', 'UGA', 'ZAF', 'ZMB', 'ZWE'],
+              'Europe': ['ALA', 'ALB', 'AND', 'AUT', 'BEL', 'BGR', 'BIH', 'BLR', 'CHE', 'CZE', 'DEU', 'DNK', 'ESP', 'EST', 'FIN', 'FRA', 'FRO', 'GBR', 'GGY', 'GIB', 'GRC', 'HRV', 'HUN', 'IMN', 'IRL', 'ISL', 'ITA', 'JEY', 'LIE', 'LTU', 'LUX', 'LVA', 'MCO', 'MDA', 'MKD', 'MLT', 'MNE', 'NLD', 'NOR', 'POL', 'PRT', 'ROU', 'RUS', 'SJM', 'SMR', 'SRB', 'SVK', 'SVN', 'SWE', 'UKR'],
+              'South America': ['ARG', 'BOL', 'BRA', 'CHL', 'COL', 'ECU', 'FLK', 'GUF', 'GUY', 'PER', 'PRY', 'SGS', 'SUR', 'URY', 'VEN'],
+              'Oceania': ['ASM', 'AUS', 'COK', 'FJI', 'FSM', 'GUM', 'KIR', 'MHL', 'MNP', 'NCL', 'NFK', 'NIU', 'NRU', 'NZL', 'PLW', 'PNG', 'PYF', 'SLB', 'TKL', 'TON', 'TUV', 'VUT', 'WLF', 'WSM']}
+
+
 class Form1(Form1Template):
     def __init__(self, **properties):
         self.data = {}
@@ -62,17 +71,20 @@ class Form1(Form1Template):
                 if self.custom_cmin_cmax:
                     self.reset_cmin_cmax()
                 data = {}
+                selected = []
                 general_data = {}
                 iso_to_name = {}
                 year_range = range(int(self.slider_multi.values[0]), int(self.slider_multi.values[1])+1, 4)
                 for year in year_range:
                     if year not in [1942, 1946]:
                         isos, nums, countries, _ = self.data[str(year)]
-                        for iso, num, country in zip(isos, nums, countries):
+                        for index, (iso, num, country) in enumerate(zip(isos, nums, countries)):
                             lst = data.get(iso, [])
                             lst.append(num)
                             data[iso] = lst
                             iso_to_name[iso] = country
+                            if iso in continents.get(self.dropdown_continent.selected_value):
+                                selected.append(index)
                         for key, value in self.general_data.get(str(year), {}).items():
                             if key in ['Teams', 'Attendance', 'AttendanceAvg', 'Matches']:
                                 lst = general_data.get(key, [])
@@ -95,12 +107,15 @@ class Form1(Form1Template):
                 countries = []
                 isos1, nums1, countries1, _ = self.data[str(int(self.slider_multi.values[0]))]
                 isos2, nums2, countries2, _ = self.data[str(int(self.slider_multi.values[1]))]
+                selected = []
                 for iso, num, country in zip(isos1, nums1, countries1):
                     isos.append(iso)
                     countries.append(country)
                     diff = nums2[isos2.index(iso)] - num
                     nums.append(diff)
                     iso_to_name[iso] = country
+                    if iso in continents.get(self.dropdown_continent.selected_value):
+                        selected.append(index)
                 self.cmin = min(nums)
                 self.cmax = max(nums)
                 self.custom_cmin_cmax = True
@@ -120,6 +135,10 @@ class Form1(Form1Template):
             if self.custom_cmin_cmax:
                 self.reset_cmin_cmax()
             isos, nums, countries, top5 = self.data[str(int(self.slider_single.value))]
+            selected = []
+            for index, iso in enumerate(isos):
+                if iso in continents.get(self.dropdown_continent.selected_value):
+                    selected.append(index)
             self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_single.value)}|\n| --- | ---: |\n'
             for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
                 self.rich_text_side.content += f'| **{key}** | {value} |\n'
@@ -145,6 +164,7 @@ class Form1(Form1Template):
                     marker_line_width = 0.5,
                     zmin = self.cmin,
                     zmax = self.cmax,
+                    selectedpoints = selected if selected else False,
                     uid=420, uirevision=True,
                     colorbar_title = self.config.get('colorbar_title'))
         bars = go.Bar(x=top5_x, y=top5_y,
@@ -238,3 +258,13 @@ class Form1(Form1Template):
 
     def plot_map_unhover(self, points, **event_args):
         self.rich_text_side.content = self.prev_richtext
+
+    def plot_map_select(self, points, **event_args):
+        year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
+        isos, nums, countries, _ = self.data[str(year)]
+
+        indices = [point['point_number'] for point in points]
+        selected_isos = [isos[index] for index in indices]
+        if selected_isos:
+            continents['{custom selection}'] = selected_isos
+            self.dropdown_continent.selected_value = '{custom selection}'

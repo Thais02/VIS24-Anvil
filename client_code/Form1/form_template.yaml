@@ -67,6 +67,26 @@ components:
         type: DropDown
         layout_properties: {slot: dropdown}
         event_bindings: {change: dropdown_multiselect_change}
+    - name: rich_text_1
+      properties: {content: '{label} {dropwdown}', font: '', font_size: 16}
+      type: RichText
+      layout_properties: {grid_position: 'HNYBSO,MKUOXZ'}
+      components:
+      - name: dropdown_continent
+        properties:
+          include_placeholder: true
+          placeholder: World
+          items: [North America, Asia, Africa, Europe, South America, Oceania, '{custom
+              selection}']
+          spacing_above: none
+          spacing_below: none
+        type: DropDown
+        layout_properties: {slot: dropwdown}
+        event_bindings: {change: dropdown_multiselect_change}
+      - name: label_2
+        properties: {text: 'Highlight ', spacing_above: none, spacing_below: none}
+        type: Label
+        layout_properties: {slot: label}
     - name: spacer_1
       properties: {height: '20'}
       type: Spacer
