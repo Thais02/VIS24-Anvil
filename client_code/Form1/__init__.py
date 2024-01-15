@@ -159,7 +159,7 @@ class Form1(Form1Template):
             self.plot_map.layout.title += f'<br>Average between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
         elif self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show difference':
             self.plot_map.layout.title += f'<br>Difference between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
-        self.plot_map.data = map
+        # self.plot_map.data = map
         
         
         self.plot_bar.layout.title = self.config.get('plot_bar_layout_title', '[untitled]')
