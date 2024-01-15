@@ -41,6 +41,7 @@ class Form1(Form1Template):
         self.slider_single.enabled = True
         self.checkbox_multiselect.enabled = True
         self.button_play.enabled = True
+        self.plot_map.layout.uirevision = self.radio_goals.get_group_value()
         self.refresh_data_bindings()
         self.refresh_map()
 
@@ -142,6 +143,7 @@ class Form1(Form1Template):
                     marker_line_width = 0.5,
                     zmin = self.cmin,
                     zmax = self.cmax,
+                    uid=420,
                     colorbar_title = self.config.get('colorbar_title'))
         bars = go.Bar(x=top5_x, y=top5_y,
                       orientation='h',
@@ -159,13 +161,13 @@ class Form1(Form1Template):
             self.plot_map.layout.title += f'<br>Average between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
         elif self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show difference':
             self.plot_map.layout.title += f'<br>Difference between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
-        # self.plot_map.data = map
+        self.plot_map.data = map
         
         
         self.plot_bar.layout.title = self.config.get('plot_bar_layout_title', '[untitled]')
         self.plot_bar.layout.xaxis.range = [self.cmin, self.cmax]
         self.plot_bar.data = bars
-        
+
     
     def form_show(self, **event_args):
         self.call_js('hideSidebar')
