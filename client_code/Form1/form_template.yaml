@@ -146,11 +146,12 @@ components:
     layout_properties: {grid_position: 'IWJUWD,BIHJIC'}
     components:
     - name: label_1
-      properties: {text: Visualisation style, spacing_above: none, bold: true, align: center}
+      properties: {text: Visualisation style, spacing_above: none, bold: true, align: center,
+        font_size: 20}
       type: Label
       layout_properties: {grid_position: 'LHJBJN,TEZNNO'}
     - name: label_3
-      properties: {text: Colour scale, align: right}
+      properties: {text: Colour scale, align: right, font_size: 16}
       type: Label
       layout_properties: {grid_position: 'LGOPUD,WJNHXJ'}
     - name: dropdown_colorscale
