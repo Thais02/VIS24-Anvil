@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 
 from collections import Counter
 
-continents = {'World': [], None: [], '{custom selection}': [],
+continents = {'World': [], '{custom selection}': [],
         	  'North America': ['ABW', 'AIA', 'ATG', 'BES', 'BHS', 'BLM', 'BLZ', 'BMU', 'BRB', 'CAN', 'CRI', 'CUB', 'CUW', 'CYM', 'DMA', 'DOM', 'GLP', 'GRD', 'GRL', 'GTM', 'HND', 'HTI', 'JAM', 'KNA', 'LCA', 'MAF', 'MEX', 'MSR', 'MTQ', 'NIC', 'PAN', 'PRI', 'SLV', 'SPM', 'TCA', 'TTO', 'USA', 'VCT', 'VGB', 'VIR'],
               'Asia': ['AFG', 'ARE', 'ARM', 'AZE', 'BGD', 'BHR', 'BRN', 'BTN', 'CCK', 'CHN', 'CXR', 'CYP', 'GEO', 'HKG', 'IDN', 'IND', 'IOT', 'IRN', 'IRQ', 'ISR', 'JOR', 'JPN', 'KAZ', 'KGZ', 'KHM', 'KOR', 'KWT', 'LAO', 'LBN', 'LKA', 'MAC', 'MDV', 'MMR', 'MNG', 'MYS', 'NPL', 'OMN', 'PAK', 'PHL', 'PRK', 'PSE', 'QAT', 'SAU', 'SGP', 'SYR', 'THA', 'TJK', 'TKM', 'TUR', 'TWN', 'UZB', 'VNM', 'YEM'],
               'Africa': ['AGO', 'BDI', 'BEN', 'BFA', 'BWA', 'CAF', 'CIV', 'CMR', 'COD', 'COG', 'COM', 'CPV', 'DJI', 'DZA', 'EGY', 'ERI', 'ETH', 'GAB', 'GHA', 'GIN', 'GMB', 'GNB', 'GNQ', 'KEN', 'LBR', 'LBY', 'LSO', 'MAR', 'MDG', 'MLI', 'MOZ', 'MRT', 'MUS', 'MWI', 'MYT', 'NAM', 'NER', 'NGA', 'REU', 'RWA', 'SDN', 'SEN', 'SHN', 'SLE', 'SOM', 'SSD', 'STP', 'SWZ', 'SYC', 'TCD', 'TGO', 'TUN', 'TZA', 'UGA', 'ZAF', 'ZMB', 'ZWE'],
@@ -13,6 +13,15 @@ continents = {'World': [], None: [], '{custom selection}': [],
               'South America': ['ARG', 'BOL', 'BRA', 'CHL', 'COL', 'ECU', 'FLK', 'GUF', 'GUY', 'PER', 'PRY', 'SGS', 'SUR', 'URY', 'VEN'],
               'Oceania': ['ASM', 'AUS', 'COK', 'FJI', 'FSM', 'GUM', 'KIR', 'MHL', 'MNP', 'NCL', 'NFK', 'NIU', 'NRU', 'NZL', 'PLW', 'PNG', 'PYF', 'SLB', 'TKL', 'TON', 'TUV', 'VUT', 'WLF', 'WSM']}
 
+continents_coordinates = {
+    'World': {'lat': 0, 'lon': 0, 'scale': 1}, '{custom selection}': {'lat': 0, 'lon': 0, 'scale': 1},
+    'North America': {'lat': 50, 'lon': -100, 'scale': 1.5},
+    'Asia': {'lat': 35, 'lon': 90, 'scale': 1.5},
+    'Africa': {'lat': 5, 'lon': 25, 'scale': 1.5},
+    'Europe': {'lat': 50, 'lon': 15, 'scale': 1.5},
+    'South America': {'lat': -15, 'lon': -60, 'scale': 1.5},
+    'Oceania': {'lat': -10, 'lon': 130, 'scale': 1.5},
+}
 
 class Form1(Form1Template):
     def __init__(self, **properties):
@@ -62,7 +71,7 @@ class Form1(Form1Template):
                 self.cmin = min(self.cmin, min(nums))
                 self.cmax = max(self.cmax, max(nums))
         
-    def refresh_map(self, redraw=False):
+    def refresh_map(self):
         self.plot_bar.height = 300
         if self.checkbox_multiselect.checked:
             if self.dropdown_multiselect.selected_value == 'show average':
@@ -175,9 +184,12 @@ class Form1(Form1Template):
                         'cmax': self.cmax,
         })
 
-        self.plot_map.layout.geo = {'showframe': self.checkbox_frame.checked, 'showcoastlines': False, 'projection': {'type': self.dropdown_projection.selected_value},
-                                    'scope': self.dropdown_continent.selected_value.lower(),
-                                    'showocean': self.checkbox_water.checked}
+        continent = self.dropdown_continent.selected_value
+        self.plot_map.layout.geo = {'showframe': self.checkbox_frame.checked, 'showcoastlines': False, 'showocean': self.checkbox_water.checked,
+                                    'projection': {'type': self.dropdown_projection.selected_value, 'scale': continents_coordinates[continent]['scale']},
+                                    'center': {'lat': continents_coordinates[continent]['lat'], 'lon': continents_coordinates[continent]['lon']},
+                                    # 'scope': continent.lower()
+                                   }
         self.plot_map.layout.title = self.config.get('plot_map_layout_title', '[untitled]')
         if self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show average':
             self.plot_map.layout.title += f'<br>Average between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
@@ -188,10 +200,6 @@ class Form1(Form1Template):
         self.plot_bar.layout.title = self.config.get('plot_bar_layout_title', '[untitled]')
         self.plot_bar.layout.xaxis.range = [self.cmin, self.cmax]
         self.plot_bar.data = bars
-
-        # if redraw:
-        #     self.plot_map.redraw()
-        #     self.plot_bar.redraw()
 
     
     def form_show(self, **event_args):
@@ -282,4 +290,4 @@ class Form1(Form1Template):
         Notification(f'You clicked on {countries[index]} ({isos[index]})', title='Congratulations!').show()
 
     def change_redraw(self, **event_args):
-        self.refresh_map(redraw=True)
+        self.refresh_map()
