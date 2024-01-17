@@ -32,7 +32,6 @@ class Form1(Form1Template):
         self.init_components(**properties)
 
     def get_data(self):
-        self.call_js('hideSidebar')
         self.slider_single.enabled = False
         self.checkbox_multiselect.enabled = False
         self.button_play.enabled = False
@@ -63,8 +62,7 @@ class Form1(Form1Template):
                 self.cmin = min(self.cmin, min(nums))
                 self.cmax = max(self.cmax, max(nums))
         
-    def refresh_map(self):
-        self.refresh_data_bindings()
+    def refresh_map(self, redraw=False):
         self.plot_bar.height = 300
         if self.checkbox_multiselect.checked:
             if self.dropdown_multiselect.selected_value == 'show average':
@@ -176,8 +174,10 @@ class Form1(Form1Template):
                         'cmin': self.cmin,
                         'cmax': self.cmax,
         })
-        
-        self.plot_map.layout.geo = {'showframe': True, 'showcoastlines': False, 'projection_type': 'mercator'}
+
+        self.plot_map.layout.geo = {'showframe': self.checkbox_frame.checked, 'showcoastlines': False, 'projection': {'type': self.dropdown_projection.selected_value},
+                                    'scope': self.dropdown_continent.selected_value.lower(),
+                                    'showocean': self.checkbox_water.checked}
         self.plot_map.layout.title = self.config.get('plot_map_layout_title', '[untitled]')
         if self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show average':
             self.plot_map.layout.title += f'<br>Average between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
@@ -189,9 +189,12 @@ class Form1(Form1Template):
         self.plot_bar.layout.xaxis.range = [self.cmin, self.cmax]
         self.plot_bar.data = bars
 
+        # if redraw:
+        #     self.plot_map.redraw()
+        #     self.plot_bar.redraw()
+
     
     def form_show(self, **event_args):
-        self.call_js('hideSidebar')
         self.get_data()
 
     def button_play_click(self, **event_args):
@@ -277,3 +280,6 @@ class Form1(Form1Template):
         isos, nums, countries, _ = self.data[str(year)]
 
         Notification(f'You clicked on {countries[index]} ({isos[index]})', title='Congratulations!').show()
+
+    def change_redraw(self, **event_args):
+        self.refresh_map(redraw=True)

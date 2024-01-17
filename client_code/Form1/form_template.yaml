@@ -92,10 +92,10 @@ components:
       components:
       - name: dropdown_continent
         properties:
-          include_placeholder: true
-          placeholder: World
-          items: [North America, Asia, Africa, Europe, South America, Oceania, '{custom
-              selection}']
+          include_placeholder: false
+          placeholder: ''
+          items: [World, North America, Asia, Africa, Europe, South America, Oceania,
+            '{custom selection}']
           spacing_above: none
           spacing_below: none
         type: DropDown
@@ -160,6 +160,26 @@ components:
       event_bindings: {change: debug_setting_change}
       data_bindings:
       - {property: checked, code: 'self.config[''reversescale'']', writeback: true}
+    - name: label_5
+      properties: {text: Projection type, align: right, bold: true, font_size: 16}
+      type: Label
+      layout_properties: {grid_position: 'OVMHVC,JJSIQX'}
+    - name: dropdown_projection
+      properties:
+        items: [equirectangular, orthographic, natural earth]
+      type: DropDown
+      layout_properties: {grid_position: 'OVMHVC,KNBVYU JRETJR,PNWCOL'}
+      event_bindings: {change: change_redraw}
+    - name: checkbox_frame
+      properties: {text: Show frame, checked: true}
+      type: CheckBox
+      layout_properties: {grid_position: 'OVMHVC,KNBVYU IAQDLP,JFDLZS'}
+      event_bindings: {change: debug_setting_change}
+    - name: checkbox_water
+      properties: {text: Colour ocean}
+      type: CheckBox
+      layout_properties: {grid_position: 'OVMHVC,KNBVYU URCFZC,BLEVPS'}
+      event_bindings: {change: debug_setting_change}
 - type: FlowPanel
   properties: {}
   name: navbar_links
