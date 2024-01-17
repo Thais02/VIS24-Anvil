@@ -15,12 +15,12 @@ continents = {'World': [], '{custom selection}': [],
 
 continents_coordinates = {
     'World': {'lat': 0, 'lon': 0, 'scale': 1}, '{custom selection}': {'lat': 0, 'lon': 0, 'scale': 1},
-    'North America': {'lat': 50, 'lon': -100, 'scale': 1.5},
-    'Asia': {'lat': 35, 'lon': 90, 'scale': 1.5},
-    'Africa': {'lat': 5, 'lon': 25, 'scale': 1.5},
-    'Europe': {'lat': 50, 'lon': 15, 'scale': 1.5},
-    'South America': {'lat': -15, 'lon': -60, 'scale': 1.5},
-    'Oceania': {'lat': -10, 'lon': 130, 'scale': 1.5},
+    'North America': {'lat': 50, 'lon': -100, 'scale': 1.8},
+    'Asia': {'lat': 35, 'lon': 90, 'scale': 1.8},
+    'Africa': {'lat': 5, 'lon': 25, 'scale': 2},
+    'Europe': {'lat': 50, 'lon': 15, 'scale': 2.5},
+    'South America': {'lat': -15, 'lon': -60, 'scale': 2},
+    'Oceania': {'lat': -10, 'lon': 130, 'scale': 1.8},
 }
 
 class Form1(Form1Template):
@@ -39,6 +39,11 @@ class Form1(Form1Template):
             'plot_bar_layout_title': 'Top 5'
         }
         self.init_components(**properties)
+        try:
+            anvil.server.call_s('ping_uplink')
+            self.label_uplink.visible = True
+        except:
+            pass
 
     def get_data(self):
         self.slider_single.enabled = False
@@ -51,7 +56,7 @@ class Form1(Form1Template):
                 self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data', vis_name=self.radio_goals.get_group_value())
             else:
                 self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data_uplink', vis_name=self.radio_goals.get_group_value())
-                Notification('Retrieved data from connected local source', title='Data fetched', style='success', timeout=6).show()
+                Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
             if config:
                 self.config = config
             self.reset_cmin_cmax()
@@ -186,9 +191,9 @@ class Form1(Form1Template):
 
         continent = self.dropdown_continent.selected_value
         self.plot_map.layout.geo = {'showframe': self.checkbox_frame.checked, 'showcoastlines': False, 'showocean': self.checkbox_water.checked,
-                                    'projection': {'type': self.dropdown_projection.selected_value, 'scale': continents_coordinates[continent]['scale']},
-                                    'center': {'lat': continents_coordinates[continent]['lat'], 'lon': continents_coordinates[continent]['lon']},
-                                    # 'scope': continent.lower()
+                                    'projection': {'type': self.dropdown_projection.selected_value, 'scale': continents_coordinates[continent]['scale'] if not self.checkbox_scope.checked else 1},
+                                    'center': {'lat': continents_coordinates[continent]['lat'], 'lon': continents_coordinates[continent]['lon']} if not self.checkbox_scope.checked else {},
+                                    'scope': continent.lower() if self.checkbox_scope.checked else 'world'
                                    }
         self.plot_map.layout.title = self.config.get('plot_map_layout_title', '[untitled]')
         if self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show average':
@@ -288,6 +293,3 @@ class Form1(Form1Template):
         isos, nums, countries, _ = self.data[str(year)]
 
         Notification(f'You clicked on {countries[index]} ({isos[index]})', title='Congratulations!').show()
-
-    def change_redraw(self, **event_args):
-        self.refresh_map()
