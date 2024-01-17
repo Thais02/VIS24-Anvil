@@ -239,6 +239,7 @@ class Form1(Form1Template):
         self.slider_single_change(None)
 
     def debug_setting_change(self, **event_args):
+        self.config['colorscale'] = self.dropdown_colorscale.selected_value
         self.refresh_map()
 
     def radio_change(self, **event_args):

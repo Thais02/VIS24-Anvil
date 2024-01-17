@@ -146,20 +146,27 @@ components:
     layout_properties: {grid_position: 'IWJUWD,BIHJIC'}
     components:
     - name: label_1
-      properties: {text: 'DEBUG settings :)', spacing_above: none}
+      properties: {text: Visualisation style, spacing_above: none, bold: true, align: center}
       type: Label
       layout_properties: {grid_position: 'LHJBJN,TEZNNO'}
+    - name: label_3
+      properties: {text: Colour scale, align: right}
+      type: Label
+      layout_properties: {grid_position: 'LGOPUD,WJNHXJ'}
+    - name: dropdown_colorscale
+      properties:
+        include_placeholder: false
+        placeholder: ''
+        items: [Reds, Blues, Greens, RedBlue]
+      type: DropDown
+      layout_properties: {grid_position: 'LGOPUD,XJHXCZ'}
+      event_bindings: {change: debug_setting_change}
+      data_bindings:
+      - {property: selected_value, code: 'self.config[''colorscale'']', writeback: false}
     - name: reversescale
-      properties: {text: reversescale}
+      properties: {text: Reverse colour scale}
       type: CheckBox
       layout_properties: {grid_position: 'XRCQOZ,CBMYOE'}
       event_bindings: {change: debug_setting_change}
       data_bindings:
       - {property: checked, code: 'self.config[''reversescale'']', writeback: true}
-    - name: colorscale
-      properties: {tooltip: colorscale, placeholder: colorscale, text: Reds}
-      type: TextBox
-      layout_properties: {grid_position: 'VRWLFH,ITCQJF'}
-      event_bindings: {pressed_enter: debug_setting_change}
-      data_bindings:
-      - {property: text, code: 'self.config[''colorscale'']', writeback: true}
