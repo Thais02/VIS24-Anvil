@@ -5,7 +5,7 @@ container:
   event_bindings: {show: form_show}
 components:
 - type: ColumnPanel
-  properties: {col_widths: '{"SXRZCO":55,"LXCHPM":15}'}
+  properties: {col_widths: '{}'}
   name: content_panel
   layout_properties: {slot: default}
   components:
@@ -34,7 +34,7 @@ components:
       event_bindings: {change: radio_change}
     - name: radio_cards
       properties: {text: '[iets met gele/rode kaarten]', align: center, spacing_above: none,
-        spacing_below: none, enabled: false, value: cards}
+        spacing_below: none, enabled: true, value: cards}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,FROQRP'}
       event_bindings: {change: radio_change}
@@ -44,40 +44,77 @@ components:
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,URRSLS'}
       event_bindings: {change: radio_change}
-  - name: card_3
-    properties: {role: card, col_spacing: none}
+  - name: cards_map_sides
+    properties: {col_widths: '{"RSMUAG":45,"HGRMGT":15}'}
     type: ColumnPanel
-    layout_properties: {grid_position: 'ANSSAX,SXRZCO', full_width_row: true}
+    layout_properties: {grid_position: 'GCGLSE,GRWHRY', full_width_row: true}
     components:
-    - name: plot_map
-      properties: {spacing_above: none, spacing_below: none, height: '700'}
-      type: Plot
-      layout_properties: {grid_position: 'CQZPOA,QOKRGL', full_width_row: true}
-      event_bindings: {hover: plot_map_hover, unhover: plot_map_unhover, select: plot_map_select,
-        click: plot_map_click}
+    - name: card_3
+      properties: {role: card, col_spacing: none}
+      type: ColumnPanel
+      layout_properties: {grid_position: 'ECTMPY,RSMUAG', full_width_row: true}
+      components:
+      - name: plot_map
+        properties: {spacing_above: none, spacing_below: none, height: '700'}
+        type: Plot
+        layout_properties: {grid_position: 'CQZPOA,QOKRGL', full_width_row: true}
+        event_bindings: {hover: plot_map_hover, unhover: plot_map_unhover, select: plot_map_select,
+          click: plot_map_click}
+    - name: card_sideplot1
+      properties: {role: card, visible: true}
+      type: ColumnPanel
+      layout_properties: {grid_position: 'ECTMPY,HGRMGT DJSHCG,JQQEUG'}
+      components:
+      - name: plot_bar
+        properties: {height: '300', spacing_above: none, spacing_below: none, visible: true}
+        type: Plot
+        layout_properties: {grid_position: 'CVFXOR,HCVPNV', full_width_row: true}
+    - name: card_sideplot2
+      properties: {role: card}
+      type: ColumnPanel
+      layout_properties: {grid_position: 'ECTMPY,HGRMGT RUBPJQ,KYCEXI'}
+      components:
+      - name: rich_text_side
+        properties: {spacing_above: none, spacing_below: none}
+        type: RichText
+        layout_properties: {grid_position: 'SRWHWC,HGZORL', full_width_row: true}
   - name: timer
     properties: {interval: 0}
     type: Timer
     layout_properties: {grid_position: 'ANSSAX,CDBEQB UDLNGK,HBMLWI'}
     event_bindings: {tick: timer_tick}
-  - name: card_sideplot1
-    properties: {role: card, visible: true}
+  - name: cards_cards
+    properties: {visible: false}
     type: ColumnPanel
-    layout_properties: {grid_position: 'ANSSAX,LXCHPM ZKFTDJ,GJJCXA'}
+    layout_properties: {grid_position: 'NKBNWO,KUBAOM', full_width_row: true}
     components:
-    - name: plot_bar
-      properties: {height: '300', spacing_above: none, spacing_below: none, visible: true}
-      type: Plot
-      layout_properties: {grid_position: 'CVFXOR,HCVPNV', full_width_row: true}
-  - name: card_sideplot2
-    properties: {role: card}
-    type: ColumnPanel
-    layout_properties: {grid_position: 'ANSSAX,LXCHPM NDRNXU,YQLQTF'}
-    components:
-    - name: rich_text_side
-      properties: {spacing_above: none, spacing_below: none}
-      type: RichText
-      layout_properties: {grid_position: 'SRWHWC,HGZORL', full_width_row: true}
+    - name: card_2
+      properties: {role: card}
+      type: ColumnPanel
+      layout_properties: {grid_position: 'EBJTVR,ZTNOTK'}
+      components:
+      - name: plot_cards_1
+        properties: {spacing_above: none, spacing_below: none}
+        type: Plot
+        layout_properties: {grid_position: 'DQMBSG,WCVSMW', full_width_row: true}
+    - name: card_6
+      properties: {role: card}
+      type: ColumnPanel
+      layout_properties: {grid_position: 'MQGNRW,RAUHCQ'}
+      components:
+      - name: plot_cards_2
+        properties: {spacing_above: none, spacing_below: none}
+        type: Plot
+        layout_properties: {grid_position: 'CNXIRF,MPAYKJ', full_width_row: true}
+    - name: card_8
+      properties: {role: card}
+      type: ColumnPanel
+      layout_properties: {grid_position: 'MQGNRW,UUGKHO'}
+      components:
+      - name: plot_cards_3
+        properties: {spacing_below: none, spacing_above: none}
+        type: Plot
+        layout_properties: {grid_position: 'UCTZJO,OIKPRY', full_width_row: true}
   - name: card_1
     properties: {role: card, col_widths: '{"ATTWSF":16,"YEUSBY":9,"FWUYAZ":23}'}
     type: ColumnPanel

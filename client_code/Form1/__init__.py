@@ -272,6 +272,8 @@ class Form1(Form1Template):
         self.get_data()
         val = self.radio_xg.get_group_value()
         if val in ['xg', 'xp']:
+            self.cards_map_sides.visible = True
+            self.cards_cards.visible = False
             self.button_play.enabled = False
             self.slider_multi.values = [2018, 2022]
             self.slider_single.visible = False
@@ -283,7 +285,8 @@ class Form1(Form1Template):
             self.dropdown_multiselect.selected_value = 'show average'
             self.button_play.tooltip = 'Not available for this visualisation'
         elif val == 'cards':
-            pass
+            self.cards_map_sides.visible = False
+            self.cards_cards.visible = True
         elif val == 'performance':
             pass
         self.refresh_map()
