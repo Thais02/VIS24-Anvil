@@ -34,40 +34,39 @@ class Form1(Form1Template):
         self.config = {
             'colorscale': 'Reds',
             'reversescale': False,
-            'colorbar_title': 'Goals scored',
+            'colorbar_title': 'Goals',
             'plot_map_layout_title': 'Total amount of goals scored per country',
             'plot_bar_layout_title': 'Top 5'
         }
         self.init_components(**properties)
-        try:
-            anvil.server.call_s('ping_uplink')
-            self.label_uplink.visible = True
-        except:
-            pass
 
-    def get_data(self):
+    def form_show(self, **event_args):
+        self.get_data()
+        self.refresh_map()
+
+    def get_data(self, reset_c=True):
         self.slider_single.enabled = False
         self.checkbox_multiselect.enabled = False
         self.button_play.enabled = False
         with Notification('Fetching data...', title='Please wait'):
             try:
                 anvil.server.call('ping_uplink')
+                self.label_uplink.visible = True
+                
             except:
-                self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data', vis_name=self.radio_goals.get_group_value())
+                self.label_uplink.visible = False
+                self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data', vis_name=self.radio_xg.get_group_value())
             else:
-                self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data_uplink', vis_name=self.radio_goals.get_group_value())
-                Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
+                self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data_uplink', vis_name=self.radio_xg.get_group_value())
+                # Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
             if config:
                 self.config = config
-            self.reset_cmin_cmax()
+            if reset_c:
+                self.reset_cmin_cmax()
         self.slider_single.enabled = True
         self.checkbox_multiselect.enabled = True
         self.button_play.enabled = True
-        self.plot_map.layout.uirevision = True
-        self.plot_map.layout.selectionrevision = True
-        self.plot_map.layout.editrevision = True
         self.refresh_data_bindings()
-        self.refresh_map()
 
     def reset_cmin_cmax(self):
         self.cmin = 99999
@@ -75,110 +74,48 @@ class Form1(Form1Template):
         for isos, nums, countries, top5 in self.data.values():
                 self.cmin = min(self.cmin, min(nums))
                 self.cmax = max(self.cmax, max(nums))
-        
-    def refresh_map(self):
-        self.plot_bar.height = 300
-        if self.checkbox_multiselect.checked:
-            if self.dropdown_multiselect.selected_value == 'show average':
-                if self.custom_cmin_cmax:
-                    self.reset_cmin_cmax()
-                data = {}
-                selected = []
-                general_data = {}
-                iso_to_name = {}
-                year_range = range(int(self.slider_multi.values[0]), int(self.slider_multi.values[1])+1, 4)
-                for year in year_range:
-                    if year not in [1942, 1946]:
-                        isos, nums, countries, _ = self.data[str(year)]
-                        for index, (iso, num, country) in enumerate(zip(isos, nums, countries)):
-                            lst = data.get(iso, [])
-                            lst.append(num)
-                            data[iso] = lst
-                            iso_to_name[iso] = country
-                            if iso in continents.get(self.dropdown_continent.selected_value):
-                                selected.append(index)
-                        for key, value in self.general_data.get(str(year), {}).items():
-                            if key in ['Teams', 'Attendance', 'AttendanceAvg', 'Matches']:
-                                lst = general_data.get(key, [])
-                                lst.append(value)
-                                general_data[key] = lst
-                isos = list(data.keys())
-                nums = [sum(val)/len(val) for val in data.values()]
-                countries = [iso_to_name[iso] for iso in data.keys()]
-                top5 = {}
-                for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common(5):
-                    top5[iso_to_name[iso]] = num
-                year_range = list(year_range)
-                self.rich_text_side.content = f'|FIFA World Cup|{year_range[0]} - {year_range[-1]}|\n| --- | ---: |\n'
-                for key, value in general_data.items():
-                    self.rich_text_side.content += f'| **{key}** | {int(sum(value)/len(value))} |\n'
-            elif self.dropdown_multiselect.selected_value == 'show difference':
-                iso_to_name = {}
-                isos = []
-                nums = []
-                countries = []
-                isos1, nums1, countries1, _ = self.data[str(int(self.slider_multi.values[0]))]
-                isos2, nums2, countries2, _ = self.data[str(int(self.slider_multi.values[1]))]
-                selected = []
-                for iso, num, country in zip(isos1, nums1, countries1):
-                    isos.append(iso)
-                    countries.append(country)
-                    diff = nums2[isos2.index(iso)] - num
-                    nums.append(diff)
-                    iso_to_name[iso] = country
-                    if iso in continents.get(self.dropdown_continent.selected_value):
-                        selected.append(index)
-                self.cmin = min(nums)
-                self.cmax = max(nums)
-                self.custom_cmin_cmax = True
-                self.plot_bar.height = 400
-                top5 = {}
-                for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common(5):
-                    top5[iso_to_name[iso]] = num
-                for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common()[-5:]:
-                    top5[iso_to_name[iso]] = num
-                self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_multi.values[0])} - {int(self.slider_multi.values[1])}|\n| --- | ---: |\n'
-                for (key, value1), (_, value2) in zip(self.general_data.get(str(int(self.slider_multi.values[0])), {}).items(),
-                                     self.general_data.get(str(int(self.slider_multi.values[1])), {}).items()):
-                    if key in ['Teams', 'Attendance', 'AttendanceAvg', 'Matches']:
-                        diff = value2 - value1
-                        self.rich_text_side.content += f'| {"🔼 " if diff > 0 else "◀️ " if diff == 0 else "🔽 "}**{key}** | {"+" if diff >= 0 else ""}{diff} |\n'
-        else:
-            if self.custom_cmin_cmax:
-                self.reset_cmin_cmax()
-            isos, nums, countries, top5 = self.data[str(int(self.slider_single.value))]
-            selected = []
-            for index, iso in enumerate(isos):
-                if iso in continents.get(self.dropdown_continent.selected_value):
-                    selected.append(index)
-            self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_single.value)}|\n| --- | ---: |\n'
-            for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
-                self.rich_text_side.content += f'| **{key}** | {value} |\n'
-        
-        top5_x = list(top5.values())
-        top5_x.reverse()
-        top5_y = list(top5.keys())
-        top5_y.reverse()
 
+    def draw_map(self, isos, nums, countries, selected):
         customdata = []
         for num in nums:
             if num >= 0 and self.dropdown_multiselect.selected_value == 'show difference':
                 customdata.append(f'+{num}')
             else:
                 customdata.append(num)
-        
+
         map = go.Choropleth(locations=isos, z=nums, text=countries, customdata=customdata,
-                    colorscale = self.config.get('colorscale', 'Reds'),
-                    hovertemplate='%{customdata}<extra>%{text}</extra>',
-                    autocolorscale = False,
-                    reversescale = self.config.get('reversescale', False),
-                    marker_line_color = 'darkgray',
-                    marker_line_width = 0.5,
-                    zmin = self.cmin,
-                    zmax = self.cmax,
-                    selectedpoints = selected if selected else False,
-                    uid=420, uirevision=True,
-                    colorbar_title = self.config.get('colorbar_title'))
+                        colorscale = self.config.get('colorscale', 'Reds'),
+                        hovertemplate='%{customdata}<extra>%{text}</extra>',
+                        autocolorscale = False,
+                        reversescale = self.config.get('reversescale', False),
+                        marker_line_color = 'darkgray',
+                        marker_line_width = 0.5,
+                        zmin = self.cmin,
+                        zmax = self.cmax,
+                        selectedpoints = selected if selected else False,
+                        uid=420, uirevision=True,
+                        colorbar_title = self.config.get('colorbar_title'))
+
+        continent = self.dropdown_continent.selected_value
+        self.plot_map.layout.geo = {'showframe': self.checkbox_frame.checked, 'showcoastlines': False, 'showocean': self.checkbox_water.checked,
+                                    'projection': {'type': self.dropdown_projection.selected_value, 'scale': continents_coordinates[continent]['scale'] if not self.checkbox_scope.checked else 1},
+                                    'center': {'lat': continents_coordinates[continent]['lat'], 'lon': continents_coordinates[continent]['lon']} if not self.checkbox_scope.checked else {},
+                                    'scope': continent.lower() if self.checkbox_scope.checked else 'world',
+                                    'showcountries': True, 'countrywidth': 0.5, 'countrycolor': 'darkgray'
+                                   }
+        self.plot_map.layout.title = self.config.get('plot_map_layout_title', '[untitled]')
+        if self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show average':
+            self.plot_map.layout.title += f'<br>Average between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
+        elif self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show difference':
+            self.plot_map.layout.title += f'<br>Difference between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
+        self.plot_map.data = map
+
+    def draw_top5(self, top5):
+        top5_x = list(top5.values())
+        top5_x.reverse()
+        top5_y = list(top5.keys())
+        top5_y.reverse()
+        
         bars = go.Bar(x=top5_x, y=top5_y,
                       orientation='h',
                       marker={
@@ -188,27 +125,100 @@ class Form1(Form1Template):
                         'cmin': self.cmin,
                         'cmax': self.cmax,
         })
-
-        continent = self.dropdown_continent.selected_value
-        self.plot_map.layout.geo = {'showframe': self.checkbox_frame.checked, 'showcoastlines': False, 'showocean': self.checkbox_water.checked,
-                                    'projection': {'type': self.dropdown_projection.selected_value, 'scale': continents_coordinates[continent]['scale'] if not self.checkbox_scope.checked else 1},
-                                    'center': {'lat': continents_coordinates[continent]['lat'], 'lon': continents_coordinates[continent]['lon']} if not self.checkbox_scope.checked else {},
-                                    'scope': continent.lower() if self.checkbox_scope.checked else 'world'
-                                   }
-        self.plot_map.layout.title = self.config.get('plot_map_layout_title', '[untitled]')
-        if self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show average':
-            self.plot_map.layout.title += f'<br>Average between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
-        elif self.checkbox_multiselect.checked and self.dropdown_multiselect.selected_value == 'show difference':
-            self.plot_map.layout.title += f'<br>Difference between {self.slider_multi.values[0]} and {self.slider_multi.values[1]}'
-        self.plot_map.data = map
         
         self.plot_bar.layout.title = self.config.get('plot_bar_layout_title', '[untitled]')
         self.plot_bar.layout.xaxis.range = [self.cmin, self.cmax]
         self.plot_bar.data = bars
-
-    
-    def form_show(self, **event_args):
-        self.get_data()
+        
+    def refresh_map(self):
+        self.plot_bar.height = 300
+        if self.radio_xg.get_group_value() in ['xg', 'xp']:
+            isos, nums, countries, top5 = self.data['2018']
+            self.draw_map(isos, nums, countries, False)
+            self.draw_top5(top5)
+            self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_single.value)}|\n| --- | ---: |\n'
+            for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
+                self.rich_text_side.content += f'| **{key}** | {value} |\n'
+        else:
+            if self.checkbox_multiselect.checked:
+                if self.dropdown_multiselect.selected_value == 'show average':
+                    if self.custom_cmin_cmax:
+                        self.reset_cmin_cmax()
+                    data = {}
+                    selected = []
+                    general_data = {}
+                    iso_to_name = {}
+                    year_range = range(int(self.slider_multi.values[0]), int(self.slider_multi.values[1])+1, 4)
+                    for year in year_range:
+                        if year not in [1942, 1946]:
+                            isos, nums, countries, _ = self.data[str(year)]
+                            for index, (iso, num, country) in enumerate(zip(isos, nums, countries)):
+                                lst = data.get(iso, [])
+                                lst.append(num)
+                                data[iso] = lst
+                                iso_to_name[iso] = country
+                                if iso in continents.get(self.dropdown_continent.selected_value):
+                                    selected.append(index)
+                            for key, value in self.general_data.get(str(year), {}).items():
+                                if key in ['Teams', 'Attendance', 'AttendanceAvg', 'Matches']:
+                                    lst = general_data.get(key, [])
+                                    lst.append(value)
+                                    general_data[key] = lst
+                    isos = list(data.keys())
+                    nums = [sum(val)/len(val) for val in data.values()]
+                    countries = [iso_to_name[iso] for iso in data.keys()]
+                    top5 = {}
+                    for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common(5):
+                        top5[iso_to_name[iso]] = num
+                    year_range = list(year_range)
+                    self.rich_text_side.content = f'|FIFA World Cup|{year_range[0]} - {year_range[-1]}|\n| --- | ---: |\n'
+                    for key, value in general_data.items():
+                        self.rich_text_side.content += f'| **{key}** | {int(sum(value)/len(value))} |\n'
+                elif self.dropdown_multiselect.selected_value == 'show difference':
+                    iso_to_name = {}
+                    isos = []
+                    nums = []
+                    countries = []
+                    isos1, nums1, countries1, _ = self.data[str(int(self.slider_multi.values[0]))]
+                    isos2, nums2, countries2, _ = self.data[str(int(self.slider_multi.values[1]))]
+                    selected = []
+                    for iso, num, country in zip(isos1, nums1, countries1):
+                        isos.append(iso)
+                        countries.append(country)
+                        diff = nums2[isos2.index(iso)] - num
+                        nums.append(diff)
+                        iso_to_name[iso] = country
+                        if iso in continents.get(self.dropdown_continent.selected_value):
+                            selected.append(index)
+                    self.cmin = min(nums)
+                    self.cmax = max(nums)
+                    self.custom_cmin_cmax = True
+                    self.plot_bar.height = 400
+                    top5 = {}
+                    for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common(5):
+                        top5[iso_to_name[iso]] = num
+                    for iso, num in Counter({iso: num for iso, num in zip(isos, nums)}).most_common()[-5:]:
+                        top5[iso_to_name[iso]] = num
+                    self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_multi.values[0])} - {int(self.slider_multi.values[1])}|\n| --- | ---: |\n'
+                    for (key, value1), (_, value2) in zip(self.general_data.get(str(int(self.slider_multi.values[0])), {}).items(),
+                                        self.general_data.get(str(int(self.slider_multi.values[1])), {}).items()):
+                        if key in ['Teams', 'Attendance', 'AttendanceAvg', 'Matches']:
+                            diff = value2 - value1
+                            self.rich_text_side.content += f'| {"🔼 " if diff > 0 else "◀️ " if diff == 0 else "🔽 "}**{key}** | {"+" if diff >= 0 else ""}{diff} |\n'
+            else:
+                if self.custom_cmin_cmax:
+                    self.reset_cmin_cmax()
+                isos, nums, countries, top5 = self.data[str(int(self.slider_single.value))]
+                selected = []
+                for index, iso in enumerate(isos):
+                    if iso in continents.get(self.dropdown_continent.selected_value):
+                        selected.append(index)
+                self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_single.value)}|\n| --- | ---: |\n'
+                for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
+                    self.rich_text_side.content += f'| **{key}** | {value} |\n'
+            
+            self.draw_map(isos, nums, countries, selected)
+            self.draw_top5(top5)
 
     def button_play_click(self, **event_args):
         if self.button_play.icon == 'fa:play':
@@ -260,6 +270,23 @@ class Form1(Form1Template):
 
     def radio_change(self, **event_args):
         self.get_data()
+        val = self.radio_xg.get_group_value()
+        if val in ['xg', 'xp']:
+            self.button_play.enabled = False
+            self.slider_multi.values = [2018, 2022]
+            self.slider_single.visible = False
+            self.slider_multi.visible = True
+            self.slider_multi.enabled = False
+            self.checkbox_multiselect.enabled = False
+            self.checkbox_multiselect.checked = True
+            self.dropdown_multiselect.enabled = False
+            self.dropdown_multiselect.selected_value = 'show average'
+            self.button_play.tooltip = 'Not available for this visualisation'
+        elif val == 'cards':
+            pass
+        elif val == 'performance':
+            pass
+        self.refresh_map()
 
     def plot_map_hover(self, points, **event_args):
         index = points[0]['point_number']

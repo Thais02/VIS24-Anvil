@@ -20,27 +20,30 @@ components:
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,FMAHWV'}
       event_bindings: {change: radio_change}
-    - name: radio_random
-      properties: {text: 'Random testing data [DEBUG]', selected: false, enabled: true,
-        value: random, italic: false, spacing_above: none, spacing_below: none, align: center}
-      type: RadioButton
-      layout_properties: {grid_position: 'QNLBGI,DMJWPP'}
-      event_bindings: {change: radio_change}
-    - name: radio_button_3
-      properties: {text: '[iets met expected goals]', spacing_above: none, spacing_below: none,
-        align: center, enabled: false, value: xg}
+    - name: radio_xg
+      properties: {text: Goals scored versus expected goals, spacing_above: none,
+        spacing_below: none, align: center, enabled: true, value: xg}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,ZGHAXB'}
-    - name: radio_button_1
+      event_bindings: {change: radio_change}
+    - name: radio_xp
+      properties: {text: Winrate versus expected winrate, spacing_above: none, spacing_below: none,
+        align: center, enabled: true, value: xp}
+      type: RadioButton
+      layout_properties: {grid_position: 'QNLBGI,IUURYU'}
+      event_bindings: {change: radio_change}
+    - name: radio_cards
       properties: {text: '[iets met gele/rode kaarten]', align: center, spacing_above: none,
         spacing_below: none, enabled: false, value: cards}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,FROQRP'}
-    - name: radio_button_2
+      event_bindings: {change: radio_change}
+    - name: radio_performance
       properties: {text: '[scatterplot ''performance'']', spacing_above: none, spacing_below: none,
         align: center, enabled: false, value: performance}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,URRSLS'}
+      event_bindings: {change: radio_change}
   - name: card_3
     properties: {role: card, col_spacing: none}
     type: ColumnPanel
@@ -57,7 +60,7 @@ components:
     type: Timer
     layout_properties: {grid_position: 'ANSSAX,CDBEQB UDLNGK,HBMLWI'}
     event_bindings: {tick: timer_tick}
-  - name: card_2
+  - name: card_sideplot1
     properties: {role: card, visible: true}
     type: ColumnPanel
     layout_properties: {grid_position: 'ANSSAX,LXCHPM ZKFTDJ,GJJCXA'}
@@ -66,7 +69,7 @@ components:
       properties: {height: '300', spacing_above: none, spacing_below: none, visible: true}
       type: Plot
       layout_properties: {grid_position: 'CVFXOR,HCVPNV', full_width_row: true}
-  - name: card_6
+  - name: card_sideplot2
     properties: {role: card}
     type: ColumnPanel
     layout_properties: {grid_position: 'ANSSAX,LXCHPM NDRNXU,YQLQTF'}
