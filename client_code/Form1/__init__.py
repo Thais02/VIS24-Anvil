@@ -129,7 +129,13 @@ class Form1(Form1Template):
         self.plot_bar.layout.title = self.config.get('plot_bar_layout_title', '[untitled]')
         self.plot_bar.layout.xaxis.range = [self.cmin, self.cmax]
         self.plot_bar.data = bars
+
+    def draw_cards_corr(self):
+        density = self.data
+        # density_plot = go.Histogram(x=density)
+        self.plot_cards_1.figure = density
         
+    
     def refresh_map(self):
         self.plot_bar.height = 300
         if self.radio_xg.get_group_value() in ['xg', 'xp']:
@@ -139,6 +145,8 @@ class Form1(Form1Template):
             self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_single.value)}|\n| --- | ---: |\n'
             for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
                 self.rich_text_side.content += f'| **{key}** | {value} |\n'
+        elif self.radio_xg.get_group_value() == 'cards':
+            self.draw_cards_corr()
         else:
             if self.checkbox_multiselect.checked:
                 if self.dropdown_multiselect.selected_value == 'show average':
@@ -269,7 +277,7 @@ class Form1(Form1Template):
         self.refresh_map()
 
     def radio_change(self, **event_args):
-        self.get_data()
+        self.get_data(reset_c=False)
         val = self.radio_xg.get_group_value()
         if val in ['xg', 'xp']:
             self.cards_map_sides.visible = True
