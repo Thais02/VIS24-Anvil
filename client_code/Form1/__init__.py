@@ -132,8 +132,13 @@ class Form1(Form1Template):
 
     def draw_cards_corr(self):
         density = self.data
-        # density_plot = go.Histogram(x=density)
         self.plot_cards_1.figure = density
+        self.plot_cards_1.layout.title = 'Density plot of card minutes'
+        self.plot_cards_1.layout.xaxis.title = 'Minutes'
+        self.plot_cards_1.layout.yaxis.title = 'Density'
+        self.plot_cards_1.layout.yaxis.tick0 = 0
+        self.plot_cards_1.layout.yaxis.dtick = 0.001
+        self.plot_cards_1.redraw()
         
     
     def refresh_map(self):
