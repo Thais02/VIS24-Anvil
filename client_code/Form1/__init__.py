@@ -44,7 +44,7 @@ class Form1(Form1Template):
         self.get_data()
         self.refresh_map()
 
-    def get_data(self, reset_c=True):
+    def get_data(self):
         self.slider_single.enabled = False
         self.checkbox_multiselect.enabled = False
         self.button_play.enabled = False
@@ -61,7 +61,7 @@ class Form1(Form1Template):
                 # Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
             if config:
                 self.config = config
-            if reset_c:
+            if self.radio_xg.get_group_value() not in ['cards']:
                 self.reset_cmin_cmax()
         self.slider_single.enabled = True
         self.checkbox_multiselect.enabled = True
@@ -131,7 +131,8 @@ class Form1(Form1Template):
         self.plot_bar.data = bars
 
     def draw_cards_corr(self):
-        density = self.data
+        density, regression, heatmap = self.data
+        
         self.plot_cards_1.figure = density
         self.plot_cards_1.layout.title = 'Density plot of card minutes'
         self.plot_cards_1.layout.xaxis.title = 'Minutes'
@@ -139,6 +140,18 @@ class Form1(Form1Template):
         self.plot_cards_1.layout.yaxis.tick0 = 0
         self.plot_cards_1.layout.yaxis.dtick = 0.001
         self.plot_cards_1.redraw()
+
+        regr = go.Scatter(x=regression[0], y=regression[1], mode='markers')
+        self.plot_cards_2.layout.title = 'Attendance versus total cards'
+        self.plot_cards_2.layout.xaxis.title = 'Attendance'
+        self.plot_cards_2.layout.yaxis.title = 'Total cards'
+        self.plot_cards_2.data = regr
+
+        self.plot_cards_3.figure = heatmap
+        self.plot_cards_3.layout.title = 'Attendance versus total cards'
+        self.plot_cards_3.layout.xaxis.title = 'Attendance'
+        self.plot_cards_3.layout.yaxis.title = 'Total cards'
+        self.plot_cards_3.redraw()
         
     
     def refresh_map(self):
@@ -282,7 +295,7 @@ class Form1(Form1Template):
         self.refresh_map()
 
     def radio_change(self, **event_args):
-        self.get_data(reset_c=False)
+        self.get_data()
         val = self.radio_xg.get_group_value()
         if val in ['xg', 'xp']:
             self.cards_map_sides.visible = True
@@ -298,10 +311,13 @@ class Form1(Form1Template):
             self.dropdown_multiselect.selected_value = 'show average'
             self.button_play.tooltip = 'Not available for this visualisation'
         elif val == 'cards':
+            self.slider_multi.enabled = True
             self.cards_map_sides.visible = False
             self.cards_cards.visible = True
         elif val == 'performance':
-            pass
+            self.slider_multi.enabled = True
+        else:
+            self.slider_multi.enabled = True
         self.refresh_map()
 
     def plot_map_hover(self, points, **event_args):
