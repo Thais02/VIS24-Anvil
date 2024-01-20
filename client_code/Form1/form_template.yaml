@@ -15,7 +15,7 @@ components:
     layout_properties: {grid_position: 'VADHFB,ANIXRH', full_width_row: false}
     components:
     - name: radio_goals
-      properties: {text: 'Goals per year [REM]', selected: true, value: goals, tooltip: goals,
+      properties: {text: Goals per year, selected: true, value: goals, tooltip: goals,
         spacing_above: none, spacing_below: none, align: center}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,FMAHWV'}
@@ -34,7 +34,7 @@ components:
       event_bindings: {change: radio_change}
     - name: radio_cards
       properties: {text: '[iets met gele/rode kaarten]', align: center, spacing_above: none,
-        spacing_below: none, enabled: true, value: cards}
+        spacing_below: none, enabled: false, value: cards}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,FROQRP'}
       event_bindings: {change: radio_change}
