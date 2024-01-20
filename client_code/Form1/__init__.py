@@ -52,7 +52,6 @@ class Form1(Form1Template):
             try:
                 anvil.server.call('ping_uplink')
                 self.label_uplink.visible = True
-                
             except:
                 self.label_uplink.visible = False
                 self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data', vis_name=self.radio_xg.get_group_value())
