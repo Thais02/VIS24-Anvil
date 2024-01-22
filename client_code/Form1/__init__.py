@@ -137,27 +137,42 @@ class Form1(Form1Template):
         self.plot_bar.data = bars
 
     def draw_cards_corr(self):
-        density, regression, heatmap = self.data
+        # density, regression, heatmap = self.data
         
-        self.plot_cards_1.figure = density
-        self.plot_cards_1.layout.title = 'Density plot of card minutes'
-        self.plot_cards_1.layout.xaxis.title = 'Minutes'
-        self.plot_cards_1.layout.yaxis.title = 'Density'
-        self.plot_cards_1.layout.yaxis.tick0 = 0
-        self.plot_cards_1.layout.yaxis.dtick = 0.001
-        self.plot_cards_1.redraw()
+        # self.plot_cards_1.figure = density
+        # self.plot_cards_1.layout.title = 'Density plot of card minutes'
+        # self.plot_cards_1.layout.xaxis.title = 'Minutes'
+        # self.plot_cards_1.layout.yaxis.title = 'Density'
+        # self.plot_cards_1.layout.yaxis.tick0 = 0
+        # self.plot_cards_1.layout.yaxis.dtick = 0.001
+        # self.plot_cards_1.redraw()
 
-        regr = go.Scatter(x=regression[0], y=regression[1], mode='markers')
-        self.plot_cards_2.layout.title = 'Attendance versus total cards'
-        self.plot_cards_2.layout.xaxis.title = 'Attendance'
-        self.plot_cards_2.layout.yaxis.title = 'Total cards'
-        self.plot_cards_2.data = regr
+        # regr = go.Scatter(x=regression[0], y=regression[1], mode='markers')
+        # self.plot_cards_2.layout.title = 'Attendance versus total cards'
+        # self.plot_cards_2.layout.xaxis.title = 'Attendance'
+        # self.plot_cards_2.layout.yaxis.title = 'Total cards'
+        # self.plot_cards_2.data = regr
 
-        self.plot_cards_3.figure = heatmap
-        self.plot_cards_3.layout.title = 'Attendance versus total cards'
-        self.plot_cards_3.layout.xaxis.title = 'Attendance'
-        self.plot_cards_3.layout.yaxis.title = 'Total cards'
-        self.plot_cards_3.redraw()
+        # self.plot_cards_3.figure = heatmap
+        # self.plot_cards_3.layout.title = 'Attendance versus total cards'
+        # self.plot_cards_3.layout.xaxis.title = 'Attendance'
+        # self.plot_cards_3.layout.yaxis.title = 'Total cards'
+        # self.plot_cards_3.redraw()
+
+        years, reds, yellows = self.data
+
+        self.plot_map.layout = {'barmode': 'stack'}
+        self.plot_map.layout.xaxis.tick0 = 1930
+        self.plot_map.layout.xaxis.dtick = 4
+        self.plot_map.layout.xaxis.title = 'Year'
+        self.plot_map.layout.yaxis.title = 'Average number of cards per match'
+
+        self.plot_map.layout.title = "Normalised red and yellow cards per year<br>I'm lovin' it"
+        
+        self.plot_map.data = [
+            go.Bar(name='Red cards', x=years, y=reds, marker={'color': '#DA291C'}),
+            go.Bar(name='Yellow cards', x=years, y=yellows, marker={'color': '#FFC72C'})
+        ]
         
     
     def refresh_map(self):
@@ -313,7 +328,10 @@ class Form1(Form1Template):
         self.get_data()
         val = self.radio_xg.get_group_value()
         if val in ['xg', 'xp']:
+            self.card_sliders.visible = True
+            self.panel_settings.visible = True
             self.card_sideplot1.visible = True
+            self.card_sideplot2.visible = True
             self.cards_map_sides.visible = True
             self.cards_cards.visible = False
             self.button_play.enabled = False
@@ -327,14 +345,24 @@ class Form1(Form1Template):
             self.dropdown_multiselect.selected_value = 'show average'
             self.button_play.tooltip = 'Not available for this visualisation'
         elif val == 'cards':
-            self.card_sideplot1.visible = True
-            self.slider_multi.enabled = True
-            self.cards_map_sides.visible = False
-            self.cards_cards.visible = True
+            # self.card_sideplot1.visible = True
+            # self.slider_multi.enabled = True
+            # self.cards_map_sides.visible = False
+            # self.cards_cards.visible = True
+            self.card_map.visible = False
+            self.card_sideplot1.visible = False
+            self.card_sideplot2.visible = False
+            self.card_sliders.visible = False
+            self.panel_settings.visible = False
+            self.card_map.visible = True
         elif val == 'performance':
             self.card_sideplot1.visible = True
             self.slider_multi.enabled = True
         elif val == 'pos':
+            self.card_sliders.visible = True
+            self.panel_settings.visible = True
+            self.card_sideplot1.visible = True
+            self.card_sideplot2.visible = True
             self.slider_multi.enabled = True
             self.card_sideplot1.visible = False
             self.checkbox_multiselect.enabled = False
@@ -345,28 +373,33 @@ class Form1(Form1Template):
             self.button_play.enabled = True
             self.button_play.tooltip = ''
         else:
+            self.card_sliders.visible = True
+            self.panel_settings.visible = True
             self.card_sideplot1.visible = True
+            self.card_sideplot2.visible = True
             self.slider_multi.enabled = True
             self.checkbox_multiselect.enabled = True
         self.refresh_map()
 
     def plot_map_hover(self, points, **event_args):
-        index = points[0]['point_number']
-        year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
-        
-        self.prev_richtext = self.rich_text_side.content
-        
-        isos, nums, countries, _ = self.data[str(year)]
-
-        try:
-            self.rich_text_side.content = f'|{countries[index]}|{year}|\n| --- | ---: |\n'
-            for key, value in self.country_stats[str(year)][isos[index]].items():
-                self.rich_text_side.content += f'| **{key}** | {value} |\n'
-        except:
-            pass
+        if self.radio_xg.get_group_value() != 'cards':
+            index = points[0]['point_number']
+            year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
+            
+            self.prev_richtext = self.rich_text_side.content
+            
+            isos, nums, countries, _ = self.data[str(year)]
+    
+            try:
+                self.rich_text_side.content = f'|{countries[index]}|{year}|\n| --- | ---: |\n'
+                for key, value in self.country_stats[str(year)][isos[index]].items():
+                    self.rich_text_side.content += f'| **{key}** | {value} |\n'
+            except:
+                pass
 
     def plot_map_unhover(self, points, **event_args):
-        self.rich_text_side.content = self.prev_richtext
+        if self.radio_xg.get_group_value() != 'cards':
+            self.rich_text_side.content = self.prev_richtext
 
     def plot_map_select(self, points, **event_args):
         year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
