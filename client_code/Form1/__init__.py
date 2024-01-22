@@ -357,10 +357,13 @@ class Form1(Form1Template):
         self.prev_richtext = self.rich_text_side.content
         
         isos, nums, countries, _ = self.data[str(year)]
-            
-        self.rich_text_side.content = f'|{countries[index]}|{year}|\n| --- | ---: |\n'
-        for key, value in self.country_stats[str(year)][isos[index]].items():
-            self.rich_text_side.content += f'| **{key}** | {value} |\n'
+
+        try:
+            self.rich_text_side.content = f'|{countries[index]}|{year}|\n| --- | ---: |\n'
+            for key, value in self.country_stats[str(year)][isos[index]].items():
+                self.rich_text_side.content += f'| **{key}** | {value} |\n'
+        except:
+            pass
 
     def plot_map_unhover(self, points, **event_args):
         self.rich_text_side.content = self.prev_richtext
