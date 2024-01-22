@@ -45,7 +45,11 @@ class Form1(Form1Template):
         self.refresh_map()
 
     def get_data(self):
+        org_slider = self.slider_multi.enabled
+        org_checkbox = self.checkbox_multiselect.enabled
+        org_button = self.button_play.enabled
         self.slider_single.enabled = False
+        self.slider_multi.enabled = False
         self.checkbox_multiselect.enabled = False
         self.button_play.enabled = False
         with Notification('Fetching data...', title='Please wait'):
@@ -63,22 +67,25 @@ class Form1(Form1Template):
             if self.radio_xg.get_group_value() not in ['cards']:
                 self.reset_cmin_cmax()
         self.slider_single.enabled = True
-        self.checkbox_multiselect.enabled = True
-        self.button_play.enabled = True
+        self.slider_multi.enabled = org_slider
+        self.checkbox_multiselect.enabled = org_checkbox
+        self.button_play.enabled = org_button
         self.refresh_data_bindings()
 
     def reset_cmin_cmax(self):
         self.cmin = 99999
         self.cmax = -99999
         for isos, nums, countries, top5 in self.data.values():
-                self.cmin = min(self.cmin, min(nums))
-                self.cmax = max(self.cmax, max(nums))
+            self.cmin = min(self.cmin, min(nums))
+            self.cmax = max(self.cmax, max(nums))
 
-    def draw_map(self, isos, nums, countries, selected):
+    def draw_map(self, isos, nums, countries, custom, selected):
         customdata = []
-        for num in nums:
+        for index, num in enumerate(nums):
             if num >= 0 and self.dropdown_multiselect.selected_value == 'show difference':
                 customdata.append(f'+{num}')
+            elif custom:
+                customdata.append(custom[index])
             else:
                 customdata.append(num)
 
@@ -157,10 +164,10 @@ class Form1(Form1Template):
         self.plot_bar.height = 300
         if self.radio_xg.get_group_value() in ['xg', 'xp']:
             isos, nums, countries, top5 = self.data['2018']
-            self.draw_map(isos, nums, countries, False)
+            self.draw_map(isos, nums, countries, [], False)
             self.draw_top5(top5)
-            self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_single.value)}|\n| --- | ---: |\n'
-            for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
+            self.rich_text_side.content = f'|FIFA World Cup|{2018}|\n| --- | ---: |\n'
+            for key, value in self.general_data.get(str(2018), {}).items():
                 self.rich_text_side.content += f'| **{key}** | {value} |\n'
         elif self.radio_xg.get_group_value() == 'cards':
             self.draw_cards_corr()
@@ -241,9 +248,11 @@ class Form1(Form1Template):
                 self.rich_text_side.content = f'|FIFA World Cup|{int(self.slider_single.value)}|\n| --- | ---: |\n'
                 for key, value in self.general_data.get(str(int(self.slider_single.value)), {}).items():
                     self.rich_text_side.content += f'| **{key}** | {value} |\n'
-            
-            self.draw_map(isos, nums, countries, selected)
-            self.draw_top5(top5)
+
+            custom = self.data[str(int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value))][3] if self.radio_xg.get_group_value() == 'pos' else []
+            self.draw_map(isos, nums, countries, custom, selected)
+            if self.radio_xg.get_group_value() in ['goals', 'xg', 'xp']:
+                self.draw_top5(top5)
 
     def button_play_click(self, **event_args):
         if self.button_play.icon == 'fa:play':
@@ -297,6 +306,7 @@ class Form1(Form1Template):
         self.get_data()
         val = self.radio_xg.get_group_value()
         if val in ['xg', 'xp']:
+            self.card_sideplot1.visible = True
             self.cards_map_sides.visible = True
             self.cards_cards.visible = False
             self.button_play.enabled = False
@@ -310,12 +320,25 @@ class Form1(Form1Template):
             self.dropdown_multiselect.selected_value = 'show average'
             self.button_play.tooltip = 'Not available for this visualisation'
         elif val == 'cards':
+            self.card_sideplot1.visible = True
             self.slider_multi.enabled = True
             self.cards_map_sides.visible = False
             self.cards_cards.visible = True
         elif val == 'performance':
+            self.card_sideplot1.visible = True
             self.slider_multi.enabled = True
+        elif val == 'pos':
+            self.slider_multi.enabled = True
+            self.card_sideplot1.visible = False
+            self.checkbox_multiselect.enabled = False
+            self.checkbox_multiselect.checked = False
+            self.dropdown_multiselect.enabled = False
+            self.slider_single.visible = True
+            self.slider_multi.visible = False
+            self.button_play.enabled = True
+            self.button_play.tooltip = ''
         else:
+            self.card_sideplot1.visible = True
             self.slider_multi.enabled = True
         self.refresh_map()
 
