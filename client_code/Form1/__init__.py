@@ -166,9 +166,16 @@ class Form1(Form1Template):
             isos, nums, countries, top5 = self.data['2018']
             self.draw_map(isos, nums, countries, [], False)
             self.draw_top5(top5)
-            self.rich_text_side.content = f'|FIFA World Cup|{2018}|\n| --- | ---: |\n'
-            for key, value in self.general_data.get(str(2018), {}).items():
-                self.rich_text_side.content += f'| **{key}** | {value} |\n'
+            general_data = {}
+            for year in [2018, 2022]:
+                for key, value in self.general_data.get(str(year), {}).items():
+                    if key in ['Teams', 'Attendance', 'AttendanceAvg', 'Matches']:
+                        lst = general_data.get(key, [])
+                        lst.append(value)
+                        general_data[key] = lst
+            self.rich_text_side.content = f'|FIFA World Cup|2018 - 2022|\n| --- | ---: |\n'
+            for key, value in general_data.items():
+                self.rich_text_side.content += f'| **{key}** | {int(sum(value)/len(value))} |\n'
         elif self.radio_xg.get_group_value() == 'cards':
             self.draw_cards_corr()
         else:
@@ -340,6 +347,7 @@ class Form1(Form1Template):
         else:
             self.card_sideplot1.visible = True
             self.slider_multi.enabled = True
+            self.checkbox_multiselect.enabled = True
         self.refresh_map()
 
     def plot_map_hover(self, points, **event_args):
