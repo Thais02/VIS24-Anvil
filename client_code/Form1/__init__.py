@@ -30,6 +30,7 @@ class Form1(Form1Template):
         self.data = {}
         self.general_data = {}
         self.country_stats, self.country_stats_ext = {}, {}
+        self.cards_per_country = {}
         self.cmin = 99999
         self.cmax = -99999
         self.custom_cmin_cmax = False
@@ -62,12 +63,15 @@ class Form1(Form1Template):
             except:
                 self.label_uplink.visible = False
                 try:
-                    self.data, config, self.general_data, self.country_stats, self.country_stats_ext = anvil.server.call('get_data', vis_name=self.radio_xg.get_group_value())
+                    self.data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
+                    = anvil.server.call('get_data', vis_name=self.radio_xg.get_group_value())
                 except:
                     Notification('This visualization is not implemented by the server, ensure the uplink script is running locally', title='Not implemented by server', style='danger', timeout=0).show()
-                    self.data, config, self.general_data, self.country_stats, self.country_stats_ext = {}, self.config, {}, {}, {}
+                    self.data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
+                    = {}, self.config, {}, {}, {}, {}
             else:
-                self.data, config, self.general_data, self.country_stats, self.country_stats_ext = anvil.server.call('get_data_uplink', vis_name=self.radio_xg.get_group_value())
+                self.data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
+                = anvil.server.call('get_data_uplink', vis_name=self.radio_xg.get_group_value())
                 # Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
             if config:
                 self.config = config
@@ -181,7 +185,6 @@ class Form1(Form1Template):
             go.Bar(name='Yellow cards', x=years, y=yellows, marker={'color': '#FFC72C'})
         ]
         
-    
     def refresh_map(self):
         self.plot_bar.height = 300
         if self.radio_xg.get_group_value() in ['xg', 'xp']:
@@ -409,27 +412,34 @@ class Form1(Form1Template):
             self.rich_text_side.content = self.prev_richtext
 
     def plot_map_select(self, points, **event_args):
-        year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
-        isos, nums, countries, _ = self.data[str(year)]
-
-        indices = [point['point_number'] for point in points]
-        selected_isos = [isos[index] for index in indices]
-        if selected_isos:
-            continents['{custom selection}'] = selected_isos
-            self.dropdown_continent.selected_value = '{custom selection}'
+        if self.radio_xg.get_group_value() != 'cards':
+            year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
+            isos, nums, countries, _ = self.data[str(year)]
+    
+            indices = [point['point_number'] for point in points]
+            selected_isos = [isos[index] for index in indices]
+            if selected_isos:
+                continents['{custom selection}'] = selected_isos
+                self.dropdown_continent.selected_value = '{custom selection}'
 
     def plot_map_click(self, points, **event_args):
-        index = points[0]['point_number']
-        year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
-        
-        isos, nums, countries, _ = self.data[str(year)]
+        if self.radio_xg.get_group_value() != 'cards':
+            index = points[0]['point_number']
+            year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
+            
+            isos, nums, countries, _ = self.data[str(year)]
+    
+            iso = isos[index]
+            country = countries[index]
+    
+            # Notification(f'You clicked on {country} ({iso})', title='Congratulations!').show()
 
-        # Notification(f'You clicked on {countries[index]} ({isos[index]})', title='Congratulations!').show()
-
-        if isos[index] == 'FRA':
-            self.column_panel_1.clear()
-            alert(Form2(self.country_stats_ext.get(isos[index], []), country=countries[index]), title=countries[index], large=True, buttons=[], dismissible=True)
-        else:
-            self.column_panel_1.clear()
-            self.column_panel_1.add_component(Form2(self.country_stats_ext.get(isos[index], []), country=countries[index]), full_width_row=True)
-            self.column_panel_1.scroll_into_view(smooth=True)
+            form = Form2(self.country_stats_ext.get(iso, []), self.cards_per_country.get(iso, ([], [], [])), country=country)
+    
+            if iso == 'FRA':
+                self.column_panel_1.clear()
+                alert(form, title=country, large=True, buttons=[], dismissible=True)
+            else:
+                self.column_panel_1.clear()
+                self.column_panel_1.add_component(form, full_width_row=True)
+                self.column_panel_1.scroll_into_view(smooth=True)
