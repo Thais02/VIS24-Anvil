@@ -58,9 +58,13 @@ class Form1(Form1Template):
                 self.label_uplink.visible = True
             except:
                 self.label_uplink.visible = False
-                self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data', vis_name=self.radio_xg.get_group_value())
+                try:
+                    self.data, config, self.general_data, self.country_stats, self.country_stats_ext = anvil.server.call('get_data', vis_name=self.radio_xg.get_group_value())
+                except:
+                    Notification('This visualization is not implemented by the server, ensure the uplink script is running locally', title='Not implemented by server', style='danger', timeout=0).show()
+                    self.data, config, self.general_data, self.country_stats, self.country_stats_ext = {}, self.config, {}, {}, {}
             else:
-                self.data, config, self.general_data, self.country_stats = anvil.server.call('get_data_uplink', vis_name=self.radio_xg.get_group_value())
+                self.data, config, self.general_data, self.country_stats, self.country_stats_ext = anvil.server.call('get_data_uplink', vis_name=self.radio_xg.get_group_value())
                 # Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
             if config:
                 self.config = config
