@@ -11,7 +11,7 @@ components:
     properties: {spacing_above: none, spacing_below: none}
     type: Plot
     layout_properties: {grid_position: 'DRTGOS,SCEEMA', full_width_row: true}
-    event_bindings: {click: plot_click}
+    event_bindings: {}
 - name: card_2
   properties: {role: card, spacing_above: none, spacing_below: none}
   type: ColumnPanel

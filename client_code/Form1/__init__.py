@@ -31,6 +31,7 @@ class Form1(Form1Template):
         self.general_data = {}
         self.country_stats, self.country_stats_ext = {}, {}
         self.cards_per_country = {}
+        self.form2 = None
         self.cmin = 99999
         self.cmax = -99999
         self.custom_cmin_cmax = False
@@ -285,6 +286,9 @@ class Form1(Form1Template):
             self.draw_map(isos, nums, countries, custom, selected)
             if self.radio_xg.get_group_value() in ['goals', 'xg', 'xp']:
                 self.draw_top5(top5)
+            if self.form2:
+                self.form2.update(year=self.slider_multi.values if self.checkbox_multiselect.checked else int(self.slider_single.value))
+                
 
     def button_play_click(self, **event_args):
         if self.button_play.icon == 'fa:play':
@@ -434,12 +438,12 @@ class Form1(Form1Template):
     
             # Notification(f'You clicked on {country} ({iso})', title='Congratulations!').show()
 
-            form = Form2(self.country_stats_ext.get(iso, []), self.cards_per_country.get(iso, ([], [], [])), country=country)
+            self.form2 = Form2(self.country_stats_ext.get(iso, []), self.cards_per_country.get(iso, ([], [], [])), country=country, year=year)
     
             if iso == 'FRA':
                 self.column_panel_1.clear()
-                alert(form, title=country, large=True, buttons=[], dismissible=True)
+                alert(self.form2, title=country, large=True, buttons=[], dismissible=True)
             else:
                 self.column_panel_1.clear()
-                self.column_panel_1.add_component(form, full_width_row=True)
+                self.column_panel_1.add_component(self.form2, full_width_row=True)
                 self.column_panel_1.scroll_into_view(smooth=True)
