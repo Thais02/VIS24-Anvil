@@ -10,6 +10,6 @@ package_name: VIS24
 allow_embedding: false
 name: VIS24
 runtime_options: {version: 2, client_version: '3', server_version: python3-full, server_spec: null}
-metadata: {title: Visualization 24, logo_img: 'asset:favicon_vis24-logo.png', description: Group 24's submission for the course Visualization at the TU/e 2023-2024}
+metadata: {title: Visualization 24, logo_img: 'asset:favicon_vis24_v2.png', description: Group 24's submission for the course Visualization at the TU/e 2023-2024}
 startup_form: Form1
 uplink_visible: true

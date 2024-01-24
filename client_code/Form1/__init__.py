@@ -27,6 +27,7 @@ continents_coordinates = {
 
 class Form1(Form1Template):
     def __init__(self, **properties):
+        self.vises = {}
         self.data = {}
         self.general_data = {}
         self.country_stats, self.country_stats_ext = {}, {}
@@ -50,6 +51,16 @@ class Form1(Form1Template):
         self.refresh_map()
 
     def get_data(self):
+        vis_name = self.radio_xg.get_group_value()
+        if vis_name in self.vises:
+            data, config = self.vises[vis_name]
+            self.data = data
+            if config:
+                self.config = config
+            if vis_name not in ['cards']:
+                self.reset_cmin_cmax()
+            self.refresh_data_bindings()
+            return
         org_slider = self.slider_multi.enabled
         org_checkbox = self.checkbox_multiselect.enabled
         org_button = self.button_play.enabled
@@ -64,19 +75,21 @@ class Form1(Form1Template):
             except:
                 self.label_uplink.visible = False
                 try:
-                    self.data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
-                    = anvil.server.call('get_data', vis_name=self.radio_xg.get_group_value())
+                    data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
+                    = anvil.server.call('get_data', vis_name=vis_name)
                 except:
                     Notification('This visualization is not implemented by the server, ensure the uplink script is running locally', title='Not implemented by server', style='danger', timeout=0).show()
-                    self.data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
+                    data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
                     = {}, self.config, {}, {}, {}, {}
             else:
-                self.data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
-                = anvil.server.call('get_data_uplink', vis_name=self.radio_xg.get_group_value())
+                data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
+                = anvil.server.call('get_data_uplink', vis_name=vis_name)
                 # Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
+            self.vises[vis_name] = (data, config)
+            self.data = data
             if config:
                 self.config = config
-            if self.radio_xg.get_group_value() not in ['cards']:
+            if vis_name not in ['cards']:
                 self.reset_cmin_cmax()
         self.slider_single.enabled = True
         self.slider_multi.enabled = org_slider
