@@ -4,11 +4,12 @@ import plotly.graph_objects as go
 import anvil.server
 
 class Form2(Form2Template):
-    def __init__(self, country='', **properties):
-        # Set Form properties and Data Bindings.
+    def __init__(self, dic, country='', **properties):
         self.init_components(**properties)
 
         self.plot_1.layout.title = country
         self.plot_1.data = go.Bar(x=[1,2,3,4,5], y=[2,4,8,16,32])
-        
-        # Any code you write here will run before the form opens.
+
+        self.richtext_side.content = f'|{country}|1930 - 2022|\n| --- | ---: |\n'
+        for key, value in dic:
+            self.richtext_side.content += f'| **{key}** | {value} |\n'

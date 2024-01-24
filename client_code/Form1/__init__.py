@@ -428,8 +428,8 @@ class Form1(Form1Template):
 
         if isos[index] == 'FRA':
             self.column_panel_1.clear()
-            alert(Form2(), title=countries[index], large=True, buttons=[], dismissible=True)
+            alert(Form2(self.country_stats_ext.get(isos[index], []), country=countries[index]), title=countries[index], large=True, buttons=[], dismissible=True)
         else:
             self.column_panel_1.clear()
-            self.column_panel_1.add_component(Form2(countries[index]), full_width_row=True)
+            self.column_panel_1.add_component(Form2(self.country_stats_ext.get(isos[index], []), country=countries[index]), full_width_row=True)
             self.column_panel_1.scroll_into_view(smooth=True)

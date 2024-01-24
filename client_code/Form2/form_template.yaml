@@ -16,17 +16,8 @@ components:
   type: ColumnPanel
   layout_properties: {grid_position: 'VHCZLE,BXMAWH'}
   components:
-  - name: rich_text_1
-    properties: {spacing_above: small, spacing_below: small, content: 'Lorem ipsum
-        dolor sit amet, consectetur adipiscing elit. Fusce pellentesque mi id fermentum
-        vehicula. Suspendisse in varius massa. Nulla venenatis nec lorem eu lobortis.
-        Pellentesque mattis rhoncus lectus, vel venenatis felis aliquet quis. Nulla
-        ut dolor neque. Phasellus sit amet nunc neque. Proin semper nibh et metus
-        commodo, ac ornare diam dapibus. Suspendisse eu bibendum est, id sollicitudin
-        eros. Vestibulum sagittis hendrerit lacus, eu cursus ex congue a. Nullam eu
-        commodo felis. Quisque in purus molestie, dignissim mi sit amet, fringilla
-        turpis. Vestibulum sit amet nunc orci. Sed molestie suscipit justo ut ullamcorper.
-        Vivamus porttitor est hendrerit, pulvinar neque quis, bibendum nibh.'}
+  - name: richtext_side
+    properties: {spacing_above: none, spacing_below: none, content: ''}
     type: RichText
-    layout_properties: {grid_position: 'YILUVM,SLXZBI', full_width_row: false}
+    layout_properties: {grid_position: 'YILUVM,SLXZBI', full_width_row: true}
 is_package: true
