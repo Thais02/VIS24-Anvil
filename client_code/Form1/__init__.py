@@ -129,7 +129,12 @@ class Form1(Form1Template):
         self.plot_map.data = map
 
     def draw_top5(self, top5):
-        top5_x = list(top5.values())
+        try:
+            top5_x = list(top5.values())
+        except:
+            # year is 1942 or 1946
+            self.plot_bar.data = []
+            return
         top5_x.reverse()
         top5_y = list(top5.keys())
         top5_y.reverse()
@@ -438,6 +443,8 @@ class Form1(Form1Template):
     
             # Notification(f'You clicked on {country} ({iso})', title='Congratulations!').show()
 
+            year = self.slider_multi.values if self.checkbox_multiselect.checked else int(self.slider_single.value)
+            
             self.form2 = Form2(self.country_stats_ext.get(iso, []), self.cards_per_country.get(iso, ([], [], [])), country=country, year=year)
     
             if iso == 'FRA':

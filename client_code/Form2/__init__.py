@@ -28,16 +28,17 @@ class Form2(Form2Template):
                 except ValueError:
                     index = None
             else:
-                for y in year:
-                    index = []
+                index = []
+                for y in range(year[0], year[1]+1, 4):
                     try:
                         i = self.years.index(year)
                         index.append(i)
                     except ValueError:
                         pass
 
+        print(year, index, list(range(year[0], year[1]+1, 4)))
         selectedpoints = False
-        if year and index:
+        if year and index is not None:
             if isinstance(year, int):
                 if self.reds[index] or self.yellows[index]:
                     selectedpoints = [index]
