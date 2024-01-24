@@ -1,7 +1,9 @@
 from ._anvil_designer import Form1Template
 from anvil import *
 import anvil.server
-import plotly.graph_objects as go
+from ..Form2 import Form2
+
+import plotly.graph_objects as go  # Plotly plotting library for interactive plots
 
 from collections import Counter
 
@@ -27,6 +29,7 @@ class Form1(Form1Template):
     def __init__(self, **properties):
         self.data = {}
         self.general_data = {}
+        self.country_stats, self.country_stats_ext = {}, {}
         self.cmin = 99999
         self.cmax = -99999
         self.custom_cmin_cmax = False
@@ -421,4 +424,12 @@ class Form1(Form1Template):
         
         isos, nums, countries, _ = self.data[str(year)]
 
-        Notification(f'You clicked on {countries[index]} ({isos[index]})', title='Congratulations!').show()
+        # Notification(f'You clicked on {countries[index]} ({isos[index]})', title='Congratulations!').show()
+
+        if isos[index] == 'FRA':
+            self.column_panel_1.clear()
+            alert(Form2(), title=countries[index], large=True, buttons=[], dismissible=True)
+        else:
+            self.column_panel_1.clear()
+            self.column_panel_1.add_component(Form2(countries[index]), full_width_row=True)
+            self.column_panel_1.scroll_into_view(smooth=True)

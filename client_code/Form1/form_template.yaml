@@ -121,6 +121,10 @@ components:
         properties: {spacing_below: none, spacing_above: none}
         type: Plot
         layout_properties: {grid_position: 'UCTZJO,OIKPRY', full_width_row: true}
+  - name: column_panel_1
+    properties: {}
+    type: ColumnPanel
+    layout_properties: {grid_position: 'DGNQOF,HNNGGP'}
   - name: card_sliders
     properties: {role: card, col_widths: '{"ATTWSF":16,"YEUSBY":9,"FWUYAZ":23}'}
     type: ColumnPanel
