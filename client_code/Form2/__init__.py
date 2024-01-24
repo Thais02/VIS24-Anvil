@@ -19,8 +19,8 @@ class Form2(Form2Template):
         self.plot.layout.title = "Red and yellow cards per year"
         
         self.plot.data = [
-            go.Bar(name='Red cards', x=years, y=reds, marker={'color': '#DA291C'}, selectedpoints=[0]),
-            go.Bar(name='Yellow cards', x=years, y=yellows, marker={'color': '#FFC72C'}, selectedpoints=[0])
+            go.Bar(name='Red cards', x=years, y=reds, marker={'color': '#DA291C'}, selectedpoints=[0, 1]),
+            go.Bar(name='Yellow cards', x=years, y=yellows, marker={'color': '#FFC72C'}, selectedpoints=[0, 1])
         ]
 
         self.richtext_side.content = f'|{country}|1930 - 2022|\n| --- | ---: |\n'
