@@ -445,7 +445,7 @@ class Form1(Form1Template):
             year = self.slider_multi.values if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
             self.form2 = Form2(self.country_stats_ext.get(iso, []), self.cards_per_country.get(iso, ([], [], [])), self.multivariate.get(iso, {}),
-                               country=country, year=year)
+                               year=year, country=country)
     
             if iso == 'FRA':
                 self.column_panel_1.clear()
