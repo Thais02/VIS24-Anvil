@@ -357,6 +357,8 @@ class Form1(Form1Template):
         self.refresh_map()
 
     def radio_change(self, **event_args):
+        self.form2 = None
+        self.column_panel_1.clear()
         self.get_data()
         val = self.radio_xg.get_group_value()
         if val in ['xg', 'xp']:
