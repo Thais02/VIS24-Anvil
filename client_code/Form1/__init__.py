@@ -2,6 +2,7 @@ from ._anvil_designer import Form1Template
 from anvil import *
 import anvil.server
 from ..Form2 import Form2
+from ..scatter import scatter
 
 import plotly.graph_objects as go  # Plotly plotting library for interactive plots
 
@@ -89,7 +90,7 @@ class Form1(Form1Template):
             self.data = data
             if config:
                 self.config = config
-            if vis_name not in ['cards']:
+            if vis_name not in ['cards', 'performance']:
                 self.reset_cmin_cmax()
         self.slider_single.enabled = True
         self.slider_multi.enabled = org_slider
@@ -222,6 +223,8 @@ class Form1(Form1Template):
                 self.rich_text_side.content += f'| **{key}** | {int(sum(value)/len(value))} |\n'
         elif self.radio_xg.get_group_value() == 'cards':
             self.draw_cards_corr()
+        elif self.radio_xg.get_group_value() == 'performance':
+            pass
         else:
             if self.checkbox_multiselect.checked:
                 if self.dropdown_multiselect.selected_value == 'show average':
@@ -392,6 +395,9 @@ class Form1(Form1Template):
         elif val == 'performance':
             self.card_sideplot1.visible = True
             self.slider_multi.enabled = True
+            self.column_panel_1.clear()
+            self.column_panel_1.add_component(scatter(fig=self.data.get('NLD', {})), full_width_row=True)
+            self.column_panel_1.scroll_into_view(smooth=True)
         elif val == 'pos':
             self.card_sliders.visible = True
             self.panel_settings.visible = True
