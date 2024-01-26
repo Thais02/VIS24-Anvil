@@ -22,7 +22,7 @@ class Form2(Form2Template):
 
     def update(self, year=None):
         self.draw_cards_bar(year)
-        self.draw_scatter()
+        self.draw_scatter(year)
 
         self.richtext_side.content = f'|{self.country}|1930 - 2022|\n| --- | ---: |\n'
         for key, value in self.dic:
@@ -70,5 +70,28 @@ class Form2(Form2Template):
             go.Bar(name='Yellow cards', x=self.years, y=self.yellows, marker={'color': '#FFC72C'}, selectedpoints=selectedpoints)
         ]
 
-    def draw_scatter(self):
-        self.plot_scatter.figure = scatter
+    def find_closest_years(self, nums):
+        years = range(1930, 2022 + 1, 4)
+        res = []
+        for num in nums:
+            res.append(min(years, key=lambda year: abs(year - num)))
+        return res
+    
+    def draw_scatter(self, year=None):
+        self.plot_scatter.figure = self.scatter
+        
+        for data_index, data in enumerate(self.plot_scatter.figure.data):
+            selected = []
+            if isinstance(year, int):
+                for index, closest_year in enumerate(self.find_closest_years(data['x'])):
+                    if closest_year == year:
+                        selected.append(index)
+            else:
+                years_range = range(year[0], year[1]+1, 4)
+                for index, closest_year in enumerate(self.find_closest_years(data['x'])):
+                    if closest_year in years_range:
+                        selected.append(index)
+            
+            data.selectedpoints = selected
+        
+        self.plot_scatter.redraw()

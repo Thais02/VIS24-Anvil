@@ -45,8 +45,8 @@ components:
       layout_properties: {grid_position: 'QNLBGI,FROQRP'}
       event_bindings: {change: radio_change}
     - name: radio_performance
-      properties: {text: '[scatterplot ''performance'']', spacing_above: none, spacing_below: none,
-        align: center, enabled: true, value: performance}
+      properties: {text: '[REMOVED]', spacing_above: none, spacing_below: none, align: center,
+        enabled: false, value: performance}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,URRSLS'}
       event_bindings: {change: radio_change}
@@ -89,38 +89,6 @@ components:
     type: Timer
     layout_properties: {grid_position: 'ANSSAX,CDBEQB UDLNGK,HBMLWI'}
     event_bindings: {tick: timer_tick}
-  - name: cards_cards
-    properties: {visible: false}
-    type: ColumnPanel
-    layout_properties: {grid_position: 'NKBNWO,KUBAOM', full_width_row: true}
-    components:
-    - name: card_2
-      properties: {role: card}
-      type: ColumnPanel
-      layout_properties: {grid_position: 'EBJTVR,ZTNOTK'}
-      components:
-      - name: plot_cards_1
-        properties: {spacing_above: none, spacing_below: none}
-        type: Plot
-        layout_properties: {grid_position: 'DQMBSG,WCVSMW', full_width_row: true}
-    - name: card_6
-      properties: {role: card}
-      type: ColumnPanel
-      layout_properties: {grid_position: 'MQGNRW,RAUHCQ'}
-      components:
-      - name: plot_cards_2
-        properties: {spacing_above: none, spacing_below: none}
-        type: Plot
-        layout_properties: {grid_position: 'CNXIRF,MPAYKJ', full_width_row: true}
-    - name: card_8
-      properties: {role: card}
-      type: ColumnPanel
-      layout_properties: {grid_position: 'MQGNRW,UUGKHO'}
-      components:
-      - name: plot_cards_3
-        properties: {spacing_below: none, spacing_above: none}
-        type: Plot
-        layout_properties: {grid_position: 'UCTZJO,OIKPRY', full_width_row: true}
   - name: column_panel_1
     properties: {}
     type: ColumnPanel

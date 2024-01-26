@@ -2,7 +2,6 @@ from ._anvil_designer import Form1Template
 from anvil import *
 import anvil.server
 from ..Form2 import Form2
-from ..scatter import scatter
 
 import plotly.graph_objects as go  # Plotly plotting library for interactive plots
 
@@ -33,6 +32,7 @@ class Form1(Form1Template):
         self.general_data = {}
         self.country_stats, self.country_stats_ext = {}, {}
         self.cards_per_country = {}
+        self.multivariate = {}
         self.form2 = None
         self.cmin = 99999
         self.cmax = -99999
@@ -76,14 +76,14 @@ class Form1(Form1Template):
             except:
                 self.label_uplink.visible = False
                 try:
-                    data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
+                    data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country, self.multivariate \
                     = anvil.server.call('get_data', vis_name=vis_name)
                 except:
                     Notification('This visualization is not implemented by the server, ensure the uplink script is running locally', title='Not implemented by server', style='danger', timeout=0).show()
-                    data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
-                    = {}, self.config, {}, {}, {}, {}
+                    data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country, self.multivariate \
+                    = {}, self.config, {}, {}, {}, {}, {}
             else:
-                data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country \
+                data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country, self.multivariate \
                 = anvil.server.call('get_data_uplink', vis_name=vis_name)
                 # Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
             self.vises[vis_name] = (data, config)
@@ -168,28 +168,6 @@ class Form1(Form1Template):
         self.plot_bar.data = bars
 
     def draw_cards_corr(self):
-        # density, regression, heatmap = self.data
-        
-        # self.plot_cards_1.figure = density
-        # self.plot_cards_1.layout.title = 'Density plot of card minutes'
-        # self.plot_cards_1.layout.xaxis.title = 'Minutes'
-        # self.plot_cards_1.layout.yaxis.title = 'Density'
-        # self.plot_cards_1.layout.yaxis.tick0 = 0
-        # self.plot_cards_1.layout.yaxis.dtick = 0.001
-        # self.plot_cards_1.redraw()
-
-        # regr = go.Scatter(x=regression[0], y=regression[1], mode='markers')
-        # self.plot_cards_2.layout.title = 'Attendance versus total cards'
-        # self.plot_cards_2.layout.xaxis.title = 'Attendance'
-        # self.plot_cards_2.layout.yaxis.title = 'Total cards'
-        # self.plot_cards_2.data = regr
-
-        # self.plot_cards_3.figure = heatmap
-        # self.plot_cards_3.layout.title = 'Attendance versus total cards'
-        # self.plot_cards_3.layout.xaxis.title = 'Attendance'
-        # self.plot_cards_3.layout.yaxis.title = 'Total cards'
-        # self.plot_cards_3.redraw()
-
         years, reds, yellows = self.data
 
         self.plot_map.layout = {'barmode': 'stack'}
@@ -466,7 +444,8 @@ class Form1(Form1Template):
 
             year = self.slider_multi.values if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
-            self.form2 = Form2(self.country_stats_ext.get(iso, []), self.cards_per_country.get(iso, ([], [], [])), country=country, year=year)
+            self.form2 = Form2(self.country_stats_ext.get(iso, []), self.cards_per_country.get(iso, ([], [], [])), self.multivariate.get(iso, {}),
+                               country=country, year=year)
     
             if iso == 'FRA':
                 self.column_panel_1.clear()
