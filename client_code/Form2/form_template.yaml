@@ -2,8 +2,18 @@ container:
   type: ColumnPanel
   properties: {col_widths: '{"YBIUOF":45,"BXMAWH":15}'}
 components:
+- name: card_3
+  properties: {role: card, spacing_above: none}
+  type: ColumnPanel
+  layout_properties: {grid_position: 'KCLDCQ,HLGKUT', full_width_row: true}
+  components:
+  - name: plot_scatter
+    properties: {spacing_above: none, spacing_below: none}
+    type: Plot
+    layout_properties: {grid_position: 'KSOJJA,NTPNQC', full_width_row: true}
+    event_bindings: {}
 - name: card_1
-  properties: {role: card, spacing_above: none, spacing_below: none}
+  properties: {role: card, spacing_above: small, spacing_below: none}
   type: ColumnPanel
   layout_properties: {grid_position: 'VHCZLE,YBIUOF', full_width_row: true}
   components:
@@ -13,7 +23,7 @@ components:
     layout_properties: {grid_position: 'DRTGOS,SCEEMA', full_width_row: true}
     event_bindings: {}
 - name: card_2
-  properties: {role: card, spacing_above: none, spacing_below: none}
+  properties: {role: card, spacing_above: small, spacing_below: none}
   type: ColumnPanel
   layout_properties: {grid_position: 'VHCZLE,BXMAWH'}
   components:

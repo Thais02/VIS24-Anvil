@@ -5,9 +5,10 @@ import anvil.server
 import plotly.graph_objects as go
 
 class Form2(Form2Template):
-    def __init__(self, dic, cards_data, country='', year=None, **properties):
+    def __init__(self, dic, cards_data, scatter, country='', year=None, **properties):
         self.dic = dic
         self.years, self.reds, self.yellows = cards_data
+        self.scatter = scatter
         self.country = country
 
         for year_iter in range(1930, 2022 + 1, 4):
@@ -20,6 +21,14 @@ class Form2(Form2Template):
         self.update(year=year)
 
     def update(self, year=None):
+        self.draw_cards_bar(year)
+        self.draw_scatter()
+
+        self.richtext_side.content = f'|{self.country}|1930 - 2022|\n| --- | ---: |\n'
+        for key, value in self.dic:
+            self.richtext_side.content += f'| **{key}** | {value} |\n'
+
+    def draw_cards_bar(self, year=None):
         index = None
         if year:
             if isinstance(year, int):
@@ -61,6 +70,5 @@ class Form2(Form2Template):
             go.Bar(name='Yellow cards', x=self.years, y=self.yellows, marker={'color': '#FFC72C'}, selectedpoints=selectedpoints)
         ]
 
-        self.richtext_side.content = f'|{self.country}|1930 - 2022|\n| --- | ---: |\n'
-        for key, value in self.dic:
-            self.richtext_side.content += f'| **{key}** | {value} |\n'
+    def draw_scatter(self):
+        self.plot_scatter.figure = scatter
