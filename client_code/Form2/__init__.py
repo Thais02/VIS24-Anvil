@@ -10,6 +10,7 @@ class Form2(Form2Template):
         self.years, self.reds, self.yellows = cards_data
         self.scatter = scatter
         self.country = country
+        self.closest_years = {0: [], 1: [], 2: []}  # data_index : [closest_years xaxis-values]
         
         self.init_components(**properties)
         self.update(year)
@@ -77,15 +78,16 @@ class Form2(Form2Template):
         made_selection = False
         selected = {0: [], 1: [], 2: []}
         for data_index, data in enumerate(self.plot_scatter.figure.data):
-            # selected = []
+            if not self.closest_years[data_index]:
+                self.closest_years[data_index] = self.find_closest_years(data['x'])
             if isinstance(year, int):
-                for index, closest_year in enumerate(self.find_closest_years(data['x'])):
+                for index, closest_year in enumerate(self.closest_years[data_index]):
                     if closest_year == year:
                         selected[data_index].append(index)
                         made_selection = True
             else:
                 years_range = range(year[0], year[1]+1, 4)
-                for index, closest_year in enumerate(self.find_closest_years(data['x'])):
+                for index, closest_year in enumerate(self.closest_years[data_index]):
                     if closest_year in years_range:
                         selected[data_index].append(index)
                         made_selection = True

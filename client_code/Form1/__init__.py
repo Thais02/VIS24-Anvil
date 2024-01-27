@@ -48,10 +48,61 @@ class Form1(Form1Template):
         self.init_components(**properties)
 
     def form_show(self, **event_args):
-        self.get_data()
+        self.get_static_data()
+        self.get_data(noti=False)
         self.refresh_map()
 
-    def get_data(self):
+    def get_static_data(self):
+        with Notification('Fetching data...', title='Please wait'):
+            try:
+                anvil.server.call('ping_uplink')
+                self.label_uplink.visible = True
+            except:
+                self.label_uplink.visible = False
+                try:
+                    self.general_data, self.country_stats_ext, self.cards_per_country, self.multivariate = anvil.server.call('get_static_data')
+                except:
+                    Notification('This visualization is not implemented by the server, ensure the uplink script is running locally',
+                                 title='Not implemented by server', style='danger', timeout=0).show()
+                    self.general_data, self.country_stats_ext, self.cards_per_country, self.multivariate = {}, {}, {}, {}
+            else:
+                self.general_data, self.country_stats_ext, self.cards_per_country, self.multivariate = anvil.server.call('get_static_data_uplink')
+                # Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
+
+    def _get_vis_data(self, vis_name):  # executed in a `with Notification` block
+        org_slider = self.slider_multi.enabled
+        org_checkbox = self.checkbox_multiselect.enabled
+        org_button = self.button_play.enabled
+        self.slider_single.enabled = False
+        self.slider_multi.enabled = False
+        self.checkbox_multiselect.enabled = False
+        self.button_play.enabled = False
+        try:
+            anvil.server.call('ping_uplink')
+            self.label_uplink.visible = True
+        except:
+            self.label_uplink.visible = False
+            try:
+                data, config, self.country_stats = anvil.server.call('get_data', vis_name=vis_name)
+            except:
+                Notification('This visualization is not implemented by the server, ensure the uplink script is running locally', title='Not implemented by server', style='danger', timeout=0).show()
+                data, config, self.country_stats = {}, self.config, {}
+        else:
+            data, config, self.country_stats = anvil.server.call('get_data_uplink', vis_name=vis_name)
+            # Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
+        self.vises[vis_name] = (data, config)
+        self.data = data
+        if config:
+            self.config = config
+        if vis_name not in ['cards', 'performance']:
+            self.reset_cmin_cmax()
+        self.slider_single.enabled = True
+        self.slider_multi.enabled = org_slider
+        self.checkbox_multiselect.enabled = org_checkbox
+        self.button_play.enabled = org_button
+        self.refresh_data_bindings()
+    
+    def get_data(self, noti=True):
         vis_name = self.radio_xg.get_group_value()
         if vis_name in self.vises:
             data, config = self.vises[vis_name]
@@ -69,29 +120,11 @@ class Form1(Form1Template):
         self.slider_multi.enabled = False
         self.checkbox_multiselect.enabled = False
         self.button_play.enabled = False
-        with Notification('Fetching data...', title='Please wait'):
-            try:
-                anvil.server.call('ping_uplink')
-                self.label_uplink.visible = True
-            except:
-                self.label_uplink.visible = False
-                try:
-                    data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country, self.multivariate \
-                    = anvil.server.call('get_data', vis_name=vis_name)
-                except:
-                    Notification('This visualization is not implemented by the server, ensure the uplink script is running locally', title='Not implemented by server', style='danger', timeout=0).show()
-                    data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country, self.multivariate \
-                    = {}, self.config, {}, {}, {}, {}, {}
-            else:
-                data, config, self.general_data, self.country_stats, self.country_stats_ext, self.cards_per_country, self.multivariate \
-                = anvil.server.call('get_data_uplink', vis_name=vis_name)
-                # Notification('Retrieved data from connected local script', title='Data fetched', style='success', timeout=6).show()
-            self.vises[vis_name] = (data, config)
-            self.data = data
-            if config:
-                self.config = config
-            if vis_name not in ['cards', 'performance']:
-                self.reset_cmin_cmax()
+        if noti:
+            with Notification('Loading visualization...', title='Please wait'):
+                self._get_vis_data(vis_name)
+        else:
+            self._get_vis_data(vis_name)
         self.slider_single.enabled = True
         self.slider_multi.enabled = org_slider
         self.checkbox_multiselect.enabled = org_checkbox
@@ -348,7 +381,6 @@ class Form1(Form1Template):
             self.card_sideplot1.visible = True
             self.card_sideplot2.visible = True
             self.cards_map_sides.visible = True
-            self.cards_cards.visible = False
             self.button_play.enabled = False
             self.slider_multi.values = [2018, 2022]
             self.slider_single.visible = False
@@ -363,7 +395,6 @@ class Form1(Form1Template):
             # self.card_sideplot1.visible = True
             # self.slider_multi.enabled = True
             # self.cards_map_sides.visible = False
-            # self.cards_cards.visible = True
             self.card_map.visible = False
             self.card_sideplot1.visible = False
             self.card_sideplot2.visible = False
@@ -454,3 +485,7 @@ class Form1(Form1Template):
                 self.column_panel_1.clear()
                 self.column_panel_1.add_component(self.form2, full_width_row=True)
                 self.column_panel_1.scroll_into_view(smooth=True)
+            self.up_button.visible = True
+
+    def up_button_click(self, **event_args):
+        self.cards_map_sides.scroll_into_view(smooth=True)
