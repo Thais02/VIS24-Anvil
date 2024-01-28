@@ -13,17 +13,17 @@ class Form2(Form2Template):
         self.closest_years = {0: [], 1: [], 2: []}  # data_index : [closest_years xaxis-values]
         
         self.init_components(**properties)
-        self.update(year)
+        self.update(year, full=True)
 
-    def update(self, year):
-        self.draw_cards_bar(year)
-        self.draw_scatter(year)
+    def update(self, year, full=False):
+        self.draw_cards_bar(year, full=full)
+        self.draw_scatter(year, full=full)
 
         self.richtext_side.content = f'|{self.country}|1930 - 2022|\n| --- | ---: |\n'
         for key, value in self.dic:
             self.richtext_side.content += f'| **{key}** | {value} |\n'
 
-    def draw_cards_bar(self, year):
+    def draw_cards_bar(self, year, full):
         index = None
         if year:
             if isinstance(year, int):
@@ -51,19 +51,23 @@ class Form2(Form2Template):
                         selectedpoints = index
                         break
             
-
-        self.plot.layout = {'barmode': 'stack'}
-        self.plot.layout.xaxis.tick0 = 1930
-        self.plot.layout.xaxis.dtick = 4
-        self.plot.layout.xaxis.title = 'Year'
-        self.plot.layout.yaxis.title = 'Total number of cards'
-
-        self.plot.layout.title = "Red and yellow cards per year"
-        
-        self.plot.data = [
-            go.Bar(name='Red cards', x=self.years, y=self.reds, marker={'color': '#DA291C'}, selectedpoints=selectedpoints),
-            go.Bar(name='Yellow cards', x=self.years, y=self.yellows, marker={'color': '#FFC72C'}, selectedpoints=selectedpoints)
-        ]
+        if full:
+            self.plot.layout = {'barmode': 'stack'}
+            self.plot.layout.xaxis.tick0 = 1930
+            self.plot.layout.xaxis.dtick = 4
+            self.plot.layout.xaxis.title = 'Year'
+            self.plot.layout.yaxis.title = 'Total number of cards'
+    
+            self.plot.layout.title = "Red and yellow cards per year"
+            
+            self.plot.data = [
+                go.Bar(name='Red cards', x=self.years, y=self.reds, marker={'color': '#DA291C'}, selectedpoints=selectedpoints),
+                go.Bar(name='Yellow cards', x=self.years, y=self.yellows, marker={'color': '#FFC72C'}, selectedpoints=selectedpoints)
+            ]
+        else:
+            for data in self.plot.data:
+                data.selectedpoints = selectedpoints
+            self.plot.redraw()
 
     def find_closest_years(self, nums):
         years = range(1930, 2022 + 1, 4)
@@ -72,8 +76,9 @@ class Form2(Form2Template):
             res.append(min(years, key=lambda year: abs(year - num)))
         return res
     
-    def draw_scatter(self, year):
-        self.plot_scatter.figure = self.scatter
+    def draw_scatter(self, year, full):
+        if full:
+            self.plot_scatter.figure = self.scatter
 
         made_selection = False
         selected = {0: [], 1: [], 2: []}

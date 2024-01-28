@@ -27,13 +27,13 @@ components:
       layout_properties: {grid_position: 'QNLBGI,FMAHWV'}
       event_bindings: {change: radio_change}
     - name: radio_xg
-      properties: {text: Goals scored versus expected goals, spacing_above: none,
-        spacing_below: none, align: center, enabled: true, value: xg}
+      properties: {text: Goals scored vs. expected goals, spacing_above: none, spacing_below: none,
+        align: center, enabled: true, value: xg}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,ZGHAXB'}
       event_bindings: {change: radio_change}
     - name: radio_xp
-      properties: {text: Winrate versus expected winrate, spacing_above: none, spacing_below: none,
+      properties: {text: Winrate vs. expected winrate, spacing_above: none, spacing_below: none,
         align: center, enabled: true, value: xp}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,IUURYU'}
@@ -43,12 +43,6 @@ components:
         spacing_below: none, enabled: true, value: cards}
       type: RadioButton
       layout_properties: {grid_position: 'QNLBGI,FROQRP'}
-      event_bindings: {change: radio_change}
-    - name: radio_performance
-      properties: {text: '[REMOVED]', spacing_above: none, spacing_below: none, align: center,
-        enabled: false, value: performance}
-      type: RadioButton
-      layout_properties: {grid_position: 'QNLBGI,URRSLS'}
       event_bindings: {change: radio_change}
   - name: panel_settings
     properties: {col_widths: '{"VACGRQ":20,"OGEIMN":25,"VZFWZU":15}', spacing_below: medium}
@@ -195,21 +189,23 @@ components:
     - name: slider_single
       properties: {pips_mode: steps, min: 1930, tooltips: true, margin: '4', pips_stepped: true,
         pips: true, max: 2022, enabled: false, pips_density: -1, limit: '', connect: 'True,
-          False', start: '1930', handle_size: '24', spacing_above: small, color: 'theme:Primary
-          500', format: .0f, step: 4}
+          False', start: '1930', behaviour: tap, handle_size: '24', spacing_above: small,
+        color: 'theme:Primary 500', format: .0f, step: 4}
       type: form:dep_ld9bkyex0y6t8:Slider
       layout_properties: {grid_position: 'LVOTPT,LIDFVU', full_width_row: false, row_background: ''}
       event_bindings: {change: slider_single_change, slide: slider_single_change}
     - name: slider_multi
       properties: {pips_mode: steps, min: 1930, tooltips: true, margin: '4', pips_stepped: true,
         pips: true, max: 2022, pips_density: -1, limit: '', visible: false, connect: 'False,True,
-          False', start: '1930,1934', handle_size: '24', spacing_above: small, color: 'theme:Primary
-          500', format: .0f, step: 4}
+          False', start: '1930,1934', behaviour: tap, handle_size: '24', spacing_above: small,
+        color: 'theme:Primary 500', format: .0f, step: 4}
       type: form:dep_ld9bkyex0y6t8:Slider
       layout_properties: {grid_position: 'PHRNMA,FPOEFG'}
       event_bindings: {change: slider_single_change, slide: slider_single_change}
     - name: richtext_multi_select
-      properties: {content: '{checkbox} {dropdown}', align: left}
+      properties: {content: '{checkbox} {dropdown}
+
+          {label}', align: left}
       type: RichText
       layout_properties: {grid_position: 'LAIZAT,FDOIRT'}
       components:
@@ -228,6 +224,12 @@ components:
         type: DropDown
         layout_properties: {slot: dropdown}
         event_bindings: {change: dropdown_multiselect_change}
+      - name: hint_multiselect
+        properties: {text: Not available for this visualization, foreground: 'theme:Primary
+            500', align: left, italic: true, spacing_below: none, spacing_above: none,
+          visible: true}
+        type: Label
+        layout_properties: {slot: label}
     - name: button_play
       properties: {text: '', icon: 'fa:play', bold: false, font_size: 25, enabled: true,
         align: center}
