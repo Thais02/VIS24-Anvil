@@ -1,6 +1,6 @@
 import anvil.server
 
-import pycountry  # pip install pycountry
+import pycountry
 
 import plotly.express as px
 
@@ -269,7 +269,8 @@ def get_scatter_data():
         )
 
         fig.update_xaxes(
-            tickvals=np.arange(1930, 2023, 4)
+            range=[1928, 2024],
+            tickvals=np.arange(1930, 2023, 4),
         )
 
         fig.update_layout(

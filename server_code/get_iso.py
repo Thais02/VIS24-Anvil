@@ -1,4 +1,4 @@
-import pycountry  # pip install pycountry
+import pycountry
 
 
 def get_iso_name(country_name):

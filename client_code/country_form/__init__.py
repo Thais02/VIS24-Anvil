@@ -1,10 +1,10 @@
-from ._anvil_designer import Form2Template
+from ._anvil_designer import country_formTemplate
 from anvil import *
 import anvil.server
 
 import plotly.graph_objects as go
 
-class Form2(Form2Template):
+class country_form(country_formTemplate):
     def __init__(self, dic, cards_data, scatter, year, country='', **properties):
         self.dic = dic
         self.years, self.reds, self.yellows = cards_data

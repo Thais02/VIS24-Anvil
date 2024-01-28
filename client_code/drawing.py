@@ -1,5 +1,28 @@
+from collections import Counter
 import plotly.graph_objects as go  # Plotly plotting library for interactive plots
 
+continents = {'World': [], '{custom selection}': [],
+        	  'North America': ['ABW', 'AIA', 'ATG', 'BES', 'BHS', 'BLM', 'BLZ', 'BMU', 'BRB', 'CAN', 'CRI', 'CUB', 'CUW', 'CYM', 'DMA', 'DOM', 'GLP', 'GRD', 'GRL', 'GTM', 'HND', 'HTI', 'JAM', 'KNA', 'LCA', 'MAF', 'MEX', 'MSR', 'MTQ', 'NIC', 'PAN', 'PRI', 'SLV', 'SPM', 'TCA', 'TTO', 'USA', 'VCT', 'VGB', 'VIR'],
+              'Asia': ['AFG', 'ARE', 'ARM', 'AZE', 'BGD', 'BHR', 'BRN', 'BTN', 'CCK', 'CHN', 'CXR', 'CYP', 'GEO', 'HKG', 'IDN', 'IND', 'IOT', 'IRN', 'IRQ', 'ISR', 'JOR', 'JPN', 'KAZ', 'KGZ', 'KHM', 'KOR', 'KWT', 'LAO', 'LBN', 'LKA', 'MAC', 'MDV', 'MMR', 'MNG', 'MYS', 'NPL', 'OMN', 'PAK', 'PHL', 'PRK', 'PSE', 'QAT', 'SAU', 'SGP', 'SYR', 'THA', 'TJK', 'TKM', 'TUR', 'TWN', 'UZB', 'VNM', 'YEM'],
+              'Africa': ['AGO', 'BDI', 'BEN', 'BFA', 'BWA', 'CAF', 'CIV', 'CMR', 'COD', 'COG', 'COM', 'CPV', 'DJI', 'DZA', 'EGY', 'ERI', 'ETH', 'GAB', 'GHA', 'GIN', 'GMB', 'GNB', 'GNQ', 'KEN', 'LBR', 'LBY', 'LSO', 'MAR', 'MDG', 'MLI', 'MOZ', 'MRT', 'MUS', 'MWI', 'MYT', 'NAM', 'NER', 'NGA', 'REU', 'RWA', 'SDN', 'SEN', 'SHN', 'SLE', 'SOM', 'SSD', 'STP', 'SWZ', 'SYC', 'TCD', 'TGO', 'TUN', 'TZA', 'UGA', 'ZAF', 'ZMB', 'ZWE'],
+              'Europe': ['ALA', 'ALB', 'AND', 'AUT', 'BEL', 'BGR', 'BIH', 'BLR', 'CHE', 'CZE', 'DEU', 'DNK', 'ESP', 'EST', 'FIN', 'FRA', 'FRO', 'GBR', 'GGY', 'GIB', 'GRC', 'HRV', 'HUN', 'IMN', 'IRL', 'ISL', 'ITA', 'JEY', 'LIE', 'LTU', 'LUX', 'LVA', 'MCO', 'MDA', 'MKD', 'MLT', 'MNE', 'NLD', 'NOR', 'POL', 'PRT', 'ROU', 'RUS', 'SJM', 'SMR', 'SRB', 'SVK', 'SVN', 'SWE', 'UKR'],
+              'South America': ['ARG', 'BOL', 'BRA', 'CHL', 'COL', 'ECU', 'FLK', 'GUF', 'GUY', 'PER', 'PRY', 'SGS', 'SUR', 'URY', 'VEN'],
+              'Oceania': ['ASM', 'AUS', 'COK', 'FJI', 'FSM', 'GUM', 'KIR', 'MHL', 'MNP', 'NCL', 'NFK', 'NIU', 'NRU', 'NZL', 'PLW', 'PNG', 'PYF', 'SLB', 'TKL', 'TON', 'TUV', 'VUT', 'WLF', 'WSM']}
+
+continents_coordinates = {
+    'World': {'lat': 0, 'lon': 0, 'scale': 1}, '{custom selection}': {'lat': 0, 'lon': 0, 'scale': 1},
+    'North America': {'lat': 50, 'lon': -100, 'scale': 1.8},
+    'Asia': {'lat': 35, 'lon': 90, 'scale': 1.8},
+    'Africa': {'lat': 5, 'lon': 25, 'scale': 2},
+    'Europe': {'lat': 50, 'lon': 15, 'scale': 2.5},
+    'South America': {'lat': -15, 'lon': -60, 'scale': 2},
+    'Oceania': {'lat': -10, 'lon': 130, 'scale': 1.8},
+}
+
+colorscales = {
+    'seq': ['Blues', 'Cividis', 'Greens', 'Greys', 'Reds', 'Viridis', 'YlGnBu', 'YlOrRd'],
+    'div': ['Earth', 'Picnic', 'Portland', 'RdBu'],
+}
 
 def draw_map(form, isos, nums, countries, custom, selected):
     customdata = []
@@ -12,14 +35,15 @@ def draw_map(form, isos, nums, countries, custom, selected):
             customdata.append(num)
 
     map = go.Choropleth(locations=isos, z=nums, text=countries, customdata=customdata,
-                    colorscale = form.config.get('colorscale', 'Reds'),
+                    colorscale = form.config.get('colorscale', 'Blues'),
                     hovertemplate='%{customdata}<extra>%{text}</extra>',
                     autocolorscale = False,
                     reversescale = form.config.get('reversescale', False),
                     marker_line_color = 'darkgray',
                     marker_line_width = 0.5,
-                    zmin = form.cmin,
-                    zmax = form.cmax,
+                    zmin = form.cmin if form.radio_xg.get_group_value() not in ['xg', 'xp'] else None,
+                    zmax = form.cmax if form.radio_xg.get_group_value() not in ['xg', 'xp'] else None,
+                    zmid=0 if form.radio_xg.get_group_value() in ['xg', 'xp'] else None,
                     selectedpoints = selected if selected else False,
                     colorbar_title = form.config.get('colorbar_title'))
 
@@ -52,10 +76,11 @@ def draw_top5(form, top5):
                     orientation='h',
                     marker={
                     'color': top5_x,
-                    'colorscale': form.config.get('colorscale', 'Reds'),
+                    'colorscale': form.config.get('colorscale', 'Blues'),
                     'reversescale': form.config.get('reversescale', False),
-                    'cmin': form.cmin,
-                    'cmax': form.cmax,
+                    'cmin': form.cmin if form.radio_xg.get_group_value() not in ['xg', 'xp'] else None,
+                    'cmax': form.cmax if form.radio_xg.get_group_value() not in ['xg', 'xp'] else None,
+                    'cmid': 0 if form.radio_xg.get_group_value() in ['xg', 'xp'] else None,
     })
     
     form.plot_bar.layout.title = form.config.get('plot_bar_layout_title', '[untitled]')
@@ -78,19 +103,12 @@ def draw_cards_corr(form):
         go.Bar(name='Yellow cards', x=years, y=yellows, marker={'color': '#FFC72C'})
     ]
 
-def reset_cmin_cmax(form):
-    form.cmin = 99999
-    form.cmax = -99999
-    for isos, nums, countries, top5 in form.data.values():
-        form.cmin = min(form.cmin, min(nums))
-        form.cmax = max(form.cmax, max(nums))
-
 def refresh_map(form):
     form.plot_bar.height = 300
     if form.radio_xg.get_group_value() in ['xg', 'xp']:
         isos, nums, countries, top5 = form.data['2018']
-        form.draw_map(isos, nums, countries, [], False)
-        form.draw_top5(top5)
+        draw_map(form, isos, nums, countries, [], False)
+        draw_top5(form, top5)
         general_data = {}
         for year in [2018, 2022]:
             for key, value in form.general_data.get(str(year), {}).items():
@@ -102,14 +120,14 @@ def refresh_map(form):
         for key, value in general_data.items():
             form.rich_text_side.content += f'| **{key}** | {int(sum(value)/len(value))} |\n'
     elif form.radio_xg.get_group_value() == 'cards':
-        form.draw_cards_corr()
+        draw_cards_corr(form)
     elif form.radio_xg.get_group_value() == 'performance':
         pass
     else:
         if form.checkbox_multiselect.checked:
             if form.dropdown_multiselect.selected_value == 'show average':
                 if form.custom_cmin_cmax:
-                    reset_cmin_cmax(form)
+                    form.reset_cmin_cmax()
                 data = {}
                 selected = []
                 general_data = {}
@@ -173,7 +191,7 @@ def refresh_map(form):
                         form.rich_text_side.content += f'| {"🔼 " if diff > 0 else "◀️ " if diff == 0 else "🔽 "}**{key}** | {"+" if diff >= 0 else ""}{diff} |\n'
         else:
             if form.custom_cmin_cmax:
-                reset_cmin_cmax(form)
+                form.reset_cmin_cmax()
             isos, nums, countries, top5 = form.data[str(int(form.slider_single.value))]
             selected = []
             for index, iso in enumerate(isos):
@@ -187,5 +205,5 @@ def refresh_map(form):
         draw_map(form, isos, nums, countries, custom, selected)
         if form.radio_xg.get_group_value() in ['goals', 'xg', 'xp']:
             draw_top5(form, top5)
-        if form.form2:
-            form.form2.update(year=form.slider_multi.values if form.checkbox_multiselect.checked else int(form.slider_single.value))
+        if form.country_form:
+            form.country_form.update(year=form.slider_multi.values if form.checkbox_multiselect.checked else int(form.slider_single.value))
