@@ -1,3 +1,5 @@
+import anvil.server
+
 import numpy as np
 import pandas as pd
 
@@ -7,7 +9,7 @@ from .get_iso import get_iso
 
 
 def calculate_performance():
-    df = pd.read_csv('Data/FIFA World Cup Historic/matches_1930_2022.csv')
+    df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
     performance_wl = {}
     performance_goals = {}
     for index, row in df.iterrows():

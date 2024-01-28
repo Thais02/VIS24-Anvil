@@ -1,3 +1,5 @@
+import anvil.server
+
 import math
 import pandas as pd
 import numpy as np
@@ -35,7 +37,7 @@ def _nan(x):
 
 
 def prep_df():
-    df = pd.read_csv('_/theme/matches_1930_2022.csv')
+    df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
 
     # Select relevant columns for analysis from the matches dataframe
     card_columns = ['home_red_card', 'away_red_card', 'home_yellow_red_card', 'away_yellow_red_card']
@@ -101,7 +103,7 @@ def total_years_total(df, cards_df, yel_cards_df):
 
     df_grouped = crds_years_df.groupby('Year').sum()
 
-    df_wc = pd.read_csv('Data/FIFA World Cup Historic/world_cup.csv')
+    df_wc = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/world_cup.csv')
     df_sorted = df_wc.sort_values('Year', ascending=True)
     df_sorted.set_index('Year', inplace=True)
 
@@ -167,12 +169,30 @@ def total_years_per_country():
 
 
 def country_statistics_extended():
-    df = pd.read_csv('_/theme/matches_1930_2022.csv')
+    df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
     data = {}  # iso : dict
     for country_name in set(df['home_team'].unique()).union(set(df['away_team'].unique())):
         # Filter matches for the specified country
         country_matches_home = df[df['home_team'] == country_name]
         country_matches_away = df[df['away_team'] == country_name]
+
+        if len(country_matches_home) == 0 or len(country_matches_away) == 0:
+            data[get_iso(country_name)] = list({
+                                               'World Cup wins': int(0),
+                                               'Finals count': int(0),
+                                               'Semi-finals count': int(0),
+                                               'Quarter-finals count': int(0),
+                                               'Total Matches': int(0),
+                                               'Total Wins': int(0),
+                                               'Total Losses': int(0),
+                                               'Total Draws': int(0),
+                                               'Goals Scored': int(0),
+                                               'Goals Conceded': int(0),
+                                               'Win-Loss Ratio': float(round(0, 2)),
+                                               'Home win-Loss Ratio': float(round(0, 2)),
+                                               'Away win-Loss Ratio': float(round(0, 2)),
+                                           }.items())
+            continue
 
         country_matches_home = country_matches_home.copy()
         country_matches_home.loc[:, 'winner'] = country_matches_home.apply(
@@ -180,7 +200,7 @@ def country_statistics_extended():
                     row['home_score'] == row['away_score'] and row['home_penalty'] > row['away_penalty']) else
             (row['away_team'] if (row['home_score'] < row['away_score']) or (
                     row['home_score'] == row['away_score'] and row['home_penalty'] < row['away_penalty']) else None),
-            axis=1)
+        axis=1)
 
         country_matches_away = country_matches_away.copy()
         country_matches_away.loc[:, 'winner'] = country_matches_away.apply(
@@ -219,7 +239,7 @@ def country_statistics_extended():
         total_goals_scored = goals_scored_home + goals_scored_away
         total_goals_conceded = goals_conceded_home + goals_conceded_away
 
-        win_loss_ratio = total_wins / total_losses if total_losses != 0 else "Infinity"
+        win_loss_ratio = total_wins / total_losses if total_losses != 0 else float('inf')
         home_win_loss_ratio = total_home_wins / total_home_losses if total_home_losses != 0 else float('inf')
         away_win_loss_ratio = total_away_wins / total_away_losses if total_away_losses != 0 else float('inf')
 

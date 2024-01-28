@@ -30,8 +30,7 @@ class Config:
 
 
 def get_goals_data():
-    # df_full = pd.read_csv('https://vis.thijsblom.xyz/_/theme/matches_1930_2022.csv')
-    df_full = pd.read_csv('Data/FIFA World Cup Historic/matches_1930_2022.csv')
+    df_full = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
 
     # dictionary with years as keys. For each year has a tuple of:
     # - list of the iso alpha_3 strings of the ALL countries (countries who did not participate/score get a value of 0)
@@ -121,7 +120,7 @@ def get_cards_data():
 
 def get_finish_data():
     blacklist = ['ATA']
-    df_full = pd.read_csv('_/theme/matches_1930_2022.csv')
+    df_full = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
 
     round_order = {
         'Group stage': 1,
@@ -185,7 +184,7 @@ def get_finish_data():
 
 def get_scatter_data():
     # Read the data from csv file and select only columns relevant for multivariate scatter plot
-    df = pd.read_csv('Data/FIFA World Cup Historic/matches_1930_2022.csv')
+    df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
     df_new = df[
         ['home_team', 'away_team', 'home_score', 'away_score', 'Round', 'Year', 'home_penalty', 'away_penalty']].copy()
 
@@ -284,13 +283,12 @@ def get_scatter_data():
 
 
 def get_general_data():
-    # df = pd.read_csv('https://vis.thijsblom.xyz/_/theme/world_cup.csv').set_index('Year')
-    df = pd.read_csv('_/theme/matches_1930_2022.csv').set_index('Year')
+    df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/world_cup.csv').set_index('Year')
     return df.set_index(df.index.astype(str)).to_dict('index')
 
 
 def get_country_stats(vis_name):
-    df_full = pd.read_csv('_/theme/matches_1930_2022.csv')
+    df_full = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
 
     data = {}  # {year: {country_iso: {keys: values}}}
 

@@ -153,6 +153,13 @@ components:
         layout_properties: {grid_position: 'CQZPOA,QOKRGL', full_width_row: true}
         event_bindings: {hover: plot_map_hover, unhover: plot_map_unhover, select: plot_map_select,
           click: plot_map_click}
+      - name: hint_maptap
+        properties: {align: center, foreground: '', text: Try tapping a country to see more data,
+          icon_align: left, spacing_below: none, italic: false, bold: false, underline: false,
+          icon: 'fa:info-circle'}
+        type: Label
+        layout_properties: {grid_position: 'HUILBT,LHRSJN', full_width_row: true,
+          row_background: ''}
     - name: card_sideplot1
       properties: {role: card, visible: false, spacing_above: none, spacing_below: small}
       type: ColumnPanel

@@ -373,6 +373,7 @@ class Form1(Form1Template):
     def radio_change(self, **event_args):
         self.form2 = None
         self.column_panel_1.clear()
+        self.up_button.visible = False
         self.get_data()
         val = self.radio_xg.get_group_value()
         if val in ['xg', 'xp']:
@@ -401,12 +402,6 @@ class Form1(Form1Template):
             self.card_sliders.visible = False
             self.panel_settings.visible = False
             self.card_map.visible = True
-        elif val == 'performance':
-            self.card_sideplot1.visible = True
-            self.slider_multi.enabled = True
-            self.column_panel_1.clear()
-            self.column_panel_1.add_component(scatter(fig=self.data.get('NLD', {})), full_width_row=True)
-            self.column_panel_1.scroll_into_view(smooth=True)
         elif val == 'pos':
             self.card_sliders.visible = True
             self.panel_settings.visible = True
@@ -486,6 +481,7 @@ class Form1(Form1Template):
                 self.column_panel_1.add_component(self.form2, full_width_row=True)
                 self.column_panel_1.scroll_into_view(smooth=True)
             self.up_button.visible = True
+            self.hint_maptap.visible = False
 
     def up_button_click(self, **event_args):
         self.cards_map_sides.scroll_into_view(smooth=True)
