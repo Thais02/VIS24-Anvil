@@ -45,7 +45,8 @@ def draw_map(form, isos, nums, countries, custom, selected):
                     zmax = form.cmax if form.radio_xg.get_group_value() not in ['xg', 'xp'] else None,
                     zmid=0 if form.radio_xg.get_group_value() in ['xg', 'xp'] else None,
                     selectedpoints = selected if selected else False,
-                    colorbar_title = form.config.get('colorbar_title'))
+                    colorbar_title = form.config.get('colorbar_title'),
+                    colorbar={'ticksuffix': '%', 'showticksuffix': True})
 
     continent = form.dropdown_continent.selected_value
     form.plot_map.layout.geo = {'showframe': form.checkbox_frame.checked, 'showcoastlines': False, 'showocean': form.checkbox_water.checked,
@@ -96,7 +97,7 @@ def draw_cards_corr(form):
     form.plot_map.layout.xaxis.title = 'Year'
     form.plot_map.layout.yaxis.title = 'Average number of cards per match'
 
-    form.plot_map.layout.title = "Normalised red and yellow cards per year<br>I'm lovin' it"
+    form.plot_map.layout.title = "Normalised red and yellow cards per year"
     
     form.plot_map.data = [
         go.Bar(name='Red cards', x=years, y=reds, marker={'color': '#DA291C'}),

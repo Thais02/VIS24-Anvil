@@ -16,6 +16,8 @@ class country_form(country_formTemplate):
         self.update(year, full=True)
 
     def update(self, year, full=False):
+        self.year = year
+        
         self.draw_cards_bar(year, full=full)
         self.draw_scatter(year, full=full)
 
@@ -66,7 +68,7 @@ class country_form(country_formTemplate):
             ]
         else:
             for data in self.plot.data:
-                data.selectedpoints = selectedpoints
+                data.selectedpoints = selectedpoints if self.checkbox_highlight.checked else False
             self.plot.redraw()
 
     def find_closest_years(self, nums):
@@ -80,24 +82,36 @@ class country_form(country_formTemplate):
         if full:
             self.plot_scatter.figure = self.scatter
 
-        made_selection = False
-        selected = {0: [], 1: [], 2: []}
+        if self.checkbox_highlight.checked:
+            made_selection = False
+            selected = {0: [], 1: [], 2: []}
+            for data_index, data in enumerate(self.plot_scatter.figure.data):
+                if not self.closest_years[data_index]:
+                    self.closest_years[data_index] = self.find_closest_years(data['x'])
+                if isinstance(year, int):
+                    for index, closest_year in enumerate(self.closest_years[data_index]):
+                        if closest_year == year:
+                            selected[data_index].append(index)
+                            made_selection = True
+                else:
+                    years_range = range(year[0], year[1]+1, 4)
+                    for index, closest_year in enumerate(self.closest_years[data_index]):
+                        if closest_year in years_range:
+                            selected[data_index].append(index)
+                            made_selection = True
+    
         for data_index, data in enumerate(self.plot_scatter.figure.data):
-            if not self.closest_years[data_index]:
-                self.closest_years[data_index] = self.find_closest_years(data['x'])
-            if isinstance(year, int):
-                for index, closest_year in enumerate(self.closest_years[data_index]):
-                    if closest_year == year:
-                        selected[data_index].append(index)
-                        made_selection = True
+            if self.checkbox_highlight.checked:
+                data.selectedpoints = selected[data_index] if selected[data_index] or made_selection else False
             else:
-                years_range = range(year[0], year[1]+1, 4)
-                for index, closest_year in enumerate(self.closest_years[data_index]):
-                    if closest_year in years_range:
-                        selected[data_index].append(index)
-                        made_selection = True
-
-        for data_index, data in enumerate(self.plot_scatter.figure.data):
-            data.selectedpoints = selected[data_index] if selected[data_index] or made_selection else False
-        
+                data.selectedpoints = False
         self.plot_scatter.redraw()
+
+    def close_button_click(self, **event_args):
+        self.parent.parent.parent.up_button_click()
+        self.parent.parent.parent.country_form = None
+        self.parent.clear()
+        del self
+
+    def checkbox_highlight_change(self, **event_args):
+        self.update(self.year)

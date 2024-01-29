@@ -1,10 +1,17 @@
 from ._anvil_designer import homeTemplate
 from anvil import *
+from anvil_extras import popover  # library which provides the small pop-up for the visualization hints
 
 from ..country_form import country_form
 from ..get_data import get_data, get_static_data
 from ..drawing import refresh_map, colorscales
 
+hints = {
+    'pos': ['Highest round reached', "This map shows which country has reached which round of that year's World Cup"],
+    'goals': ['Goals per year', "This map shows how many total goals each participating country has scored that year"],
+    'xg': ['Expected goals', "This map shows how much more/less goals each country scored compared to the expected number of goals that were predicted"],
+    'xp': ['Expected winrate', "This map shows which countries won more matches than predicted, or lost more matches than predicted"],
+}
 
 class home(homeTemplate):
     def __init__(self, **properties):
@@ -21,13 +28,14 @@ class home(homeTemplate):
         self.prev_richtext = ''
         self.config = {
             'colorscale': 'Blues',
-            'reversescale': False,
+            'reversescale': True,
             'colorbar_title': 'Goals',
             'plot_map_layout_title': 'Total amount of goals scored per country',
             'plot_bar_layout_title': 'Top 5'
         }
         self.init_components(**properties)
         self.dropdown_colorscale.items = colorscales['seq']
+        self.set_hint_popover('pos')
 
     def form_show(self, **event_args):
         get_static_data(form=self)
@@ -40,6 +48,13 @@ class home(homeTemplate):
         for isos, nums, countries, top5 in self.data.values():
             self.cmin = min(self.cmin, min(nums))
             self.cmax = max(self.cmax, max(nums))
+
+    def set_hint_popover(self, vis_name):
+        if popover.has_popover(self.hint_popover):
+            popover.pop(self.hint_popover, 'destroy')
+        popover.popover(self.hint_popover, hints.get(vis_name, ['Unavailable', 'No info available'])[1], title=hints.get(vis_name, ['Unavailable'])[0],
+                        trigger='hover click', placement='top', auto_dismiss=True, animation=True)
+        self.hint_popover.visible = True
 
     def button_play_click(self, **event_args):
         if self.button_play.icon == 'fa:play':
@@ -95,12 +110,12 @@ class home(homeTemplate):
         self.up_button.visible = False
         get_data(form=self)
         val = self.radio_xg.get_group_value()
+        self.set_hint_popover(val)
         if val in ['xg', 'xp']:
             self.card_sliders.visible = True
             self.panel_settings.visible = True
             self.card_sideplot1.visible = True
             self.card_sideplot2.visible = True
-            self.cards_map_sides.visible = True
             self.button_play.enabled = False
             self.slider_multi.values = [2018, 2022]
             self.slider_single.visible = False
@@ -120,6 +135,7 @@ class home(homeTemplate):
             self.card_sliders.visible = False
             self.panel_settings.visible = False
             self.hint_maptap.visible = False
+            self.hint_popover.visible = False
             self.dropdown_colorscale.items = colorscales['seq']
             self.config['colorscale'] = 'Blues'
         elif val == 'pos':
