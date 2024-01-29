@@ -4,6 +4,10 @@ import anvil.server
 
 import plotly.graph_objects as go
 
+from ..drawing import margins_bar
+
+margins_scatter = dict(l=5, r=10, b=0, t=0)
+
 class country_form(country_formTemplate):
     def __init__(self, dic, cards_data, scatter, year, country='', **properties):
         self.dic = dic
@@ -11,6 +15,7 @@ class country_form(country_formTemplate):
         self.scatter = scatter
         self.country = country
         self.closest_years = {0: [], 1: [], 2: []}  # data_index : [closest_years xaxis-values]
+        self.selected = True
         
         self.init_components(**properties)
         self.update(year, full=True)
@@ -54,7 +59,7 @@ class country_form(country_formTemplate):
                         break
             
         if full:
-            self.plot.layout = {'barmode': 'stack'}
+            self.plot.layout = {'barmode': 'stack', 'margin': margins_bar}
             self.plot.layout.xaxis.tick0 = 1930
             self.plot.layout.xaxis.dtick = 4
             self.plot.layout.xaxis.title = 'Year'
@@ -68,7 +73,12 @@ class country_form(country_formTemplate):
             ]
         else:
             for data in self.plot.data:
-                data.selectedpoints = selectedpoints if self.checkbox_highlight.checked else False
+                if self.checkbox_highlight.checked:
+                    data.selectedpoints = selectedpoints
+                elif self.selected:
+                    data.selectedpoints = False
+                else:
+                    return
             self.plot.redraw()
 
     def find_closest_years(self, nums):
@@ -81,6 +91,7 @@ class country_form(country_formTemplate):
     def draw_scatter(self, year, full):
         if full:
             self.plot_scatter.figure = self.scatter
+            self.plot_scatter.layout.margins = margins_scatter
 
         if self.checkbox_highlight.checked:
             made_selection = False
@@ -103,8 +114,10 @@ class country_form(country_formTemplate):
         for data_index, data in enumerate(self.plot_scatter.figure.data):
             if self.checkbox_highlight.checked:
                 data.selectedpoints = selected[data_index] if selected[data_index] or made_selection else False
-            else:
+            elif self.selected:
                 data.selectedpoints = False
+            else:
+                return
         self.plot_scatter.redraw()
 
     def close_button_click(self, **event_args):
@@ -115,3 +128,5 @@ class country_form(country_formTemplate):
 
     def checkbox_highlight_change(self, **event_args):
         self.update(self.year)
+        if self.checkbox_highlight.checked:
+            self.selected = False

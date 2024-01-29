@@ -10,7 +10,8 @@ hints = {
     'pos': ['Highest round reached', "This map shows which country has reached which round of that year's World Cup"],
     'goals': ['Goals per year', "This map shows how many total goals each participating country has scored that year"],
     'xg': ['Expected goals', "This map shows how much more/less goals each country scored compared to the expected number of goals that were predicted"],
-    'xp': ['Expected winrate', "This map shows which countries won more matches than predicted, or lost more matches than predicted"],
+    'xp': ['Expected winrate',
+           "This map shows how countries performed relative to the expectation. A relative winrate of 100% means a country won all matches they were expected to lose, and did not lose any matches they were expected to win. -100% means the exact opposite"],
 }
 
 class home(homeTemplate):
@@ -75,9 +76,6 @@ class home(homeTemplate):
             self.slider_single.value = 1930
         else:
             self.slider_single.value += 4
-        self.slider_single_change(None)
-
-    def slider_single_change(self, handle, **event_args):
         refresh_map(self)
 
     def checkbox_multiselect_change(self, **event_args):
@@ -95,13 +93,9 @@ class home(homeTemplate):
             self.button_play.enabled = True
             self.dropdown_multiselect.enabled = False
             self.button_play.tooltip = ''
-        self.slider_single_change(None)
+        refresh_map(self)
 
-    def dropdown_multiselect_change(self, **event_args):
-        self.slider_single_change(None)
-
-    def debug_setting_change(self, **event_args):
-        self.config['colorscale'] = self.dropdown_colorscale.selected_value
+    def setting_change(self, **event_args):
         refresh_map(self)
 
     def radio_change(self, **event_args):

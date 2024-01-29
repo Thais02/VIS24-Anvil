@@ -24,7 +24,11 @@ colorscales = {
     'div': ['Earth', 'Picnic', 'Portland', 'RdBu'],
 }
 
+margins_map = dict(l=5, r=10, b=0, t=50)
+margins_bar = dict(l=80, r=50, b=80, t=50)
+
 def draw_map(form, isos, nums, countries, custom, selected):
+    vis_name = form.radio_xg.get_group_value()
     customdata = []
     for index, num in enumerate(nums):
         if num >= 0 and form.dropdown_multiselect.selected_value == 'show difference':
@@ -41,12 +45,13 @@ def draw_map(form, isos, nums, countries, custom, selected):
                     reversescale = form.config.get('reversescale', False),
                     marker_line_color = 'darkgray',
                     marker_line_width = 0.5,
-                    zmin = form.cmin if form.radio_xg.get_group_value() not in ['xg', 'xp'] else None,
-                    zmax = form.cmax if form.radio_xg.get_group_value() not in ['xg', 'xp'] else None,
-                    zmid=0 if form.radio_xg.get_group_value() in ['xg', 'xp'] else None,
+                    zmin = form.cmin if vis_name not in ['xg', 'xp'] else None,
+                    zmax = form.cmax if vis_name not in ['xg', 'xp'] else None,
+                    zmid=0 if vis_name in ['xg', 'xp'] else None,
                     selectedpoints = selected if selected else False,
-                    colorbar_title = form.config.get('colorbar_title'),
-                    colorbar={'ticksuffix': '&#37;', 'showticksuffix': True})
+                    colorbar={'title': {'text': form.config.get('colorbar_title')},
+                              'ticksuffix': '&#37;' if vis_name == 'xp' else ''},
+                    )
 
     continent = form.dropdown_continent.selected_value
     form.plot_map.layout.geo = {'showframe': form.checkbox_frame.checked, 'showcoastlines': False, 'showocean': form.checkbox_water.checked,
@@ -91,7 +96,7 @@ def draw_top5(form, top5):
 def draw_cards_corr(form):
     years, reds, yellows = form.data
 
-    form.plot_map.layout = {'barmode': 'stack'}
+    form.plot_map.layout = {'barmode': 'stack', 'margin': margins_bar}
     form.plot_map.layout.xaxis.tick0 = 1930
     form.plot_map.layout.xaxis.dtick = 4
     form.plot_map.layout.xaxis.title = 'Year'
@@ -106,6 +111,7 @@ def draw_cards_corr(form):
 
 def refresh_map(form):
     form.plot_bar.height = 300
+    form.plot_map.layout.margin = margins_map
     if form.radio_xg.get_group_value() in ['xg', 'xp']:
         isos, nums, countries, top5 = form.data['2018']
         draw_map(form, isos, nums, countries, [], False)
@@ -201,7 +207,7 @@ def refresh_map(form):
             form.rich_text_side.content = f'|FIFA World Cup|{int(form.slider_single.value)}|\n| --- | ---: |\n'
             for key, value in form.general_data.get(str(int(form.slider_single.value)), {}).items():
                 form.rich_text_side.content += f'| **{key}** | {value} |\n'
-
+        
         custom = form.data[str(int(form.slider_multi.value) if form.checkbox_multiselect.checked else int(form.slider_single.value))][3] if form.radio_xg.get_group_value() == 'pos' else []
         draw_map(form, isos, nums, countries, custom, selected)
         if form.radio_xg.get_group_value() in ['goals', 'xg', 'xp']:

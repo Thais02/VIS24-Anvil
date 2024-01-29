@@ -67,14 +67,14 @@ components:
           spacing_above: none
         type: DropDown
         layout_properties: {grid_position: 'LGOPUD,XJHXCZ FTTOKW,BMBXRH'}
-        event_bindings: {change: debug_setting_change}
+        event_bindings: {change: setting_change}
         data_bindings:
-        - {property: selected_value, code: 'self.config[''colorscale'']', writeback: false}
+        - {property: selected_value, code: 'self.config[''colorscale'']', writeback: true}
       - name: reversescale
         properties: {text: Reverse colour scale, spacing_below: none, checked: true}
         type: CheckBox
         layout_properties: {grid_position: 'LGOPUD,XJHXCZ UHSHGF,KKVDRC'}
-        event_bindings: {change: debug_setting_change}
+        event_bindings: {change: setting_change}
         data_bindings:
         - {property: checked, code: 'self.config[''reversescale'']', writeback: true}
     - name: card_7
@@ -93,17 +93,17 @@ components:
           spacing_above: none
         type: DropDown
         layout_properties: {grid_position: 'SUDVTP,NDKIDN KELOJE,JGLLZG'}
-        event_bindings: {change: debug_setting_change}
+        event_bindings: {change: setting_change}
       - name: checkbox_frame
         properties: {text: Show frame, checked: true, spacing_below: none, spacing_above: small}
         type: CheckBox
         layout_properties: {grid_position: 'SUDVTP,NDKIDN FKTOFY,ETFYJY'}
-        event_bindings: {change: debug_setting_change}
+        event_bindings: {change: setting_change}
       - name: checkbox_water
         properties: {text: Draw oceans, spacing_above: none, spacing_below: none}
         type: CheckBox
         layout_properties: {grid_position: 'SUDVTP,NDKIDN YDQYKS,SPIYHY'}
-        event_bindings: {change: debug_setting_change}
+        event_bindings: {change: setting_change}
     - name: card_1
       properties: {role: card, spacing_above: none, spacing_below: none}
       type: ColumnPanel
@@ -125,12 +125,12 @@ components:
           align: left
         type: DropDown
         layout_properties: {grid_position: 'QNQRID,NZMRNP BKUQMP,AOZNTQ'}
-        event_bindings: {change: dropdown_multiselect_change}
+        event_bindings: {change: setting_change}
       - name: checkbox_scope
         properties: {text: Hide others, spacing_below: none, spacing_above: small}
         type: CheckBox
         layout_properties: {grid_position: 'QNQRID,NZMRNP AZVXBQ,IPKLUY'}
-        event_bindings: {change: debug_setting_change}
+        event_bindings: {change: setting_change}
   - name: cards_map_sides
     properties: {col_widths: '{"RSMUAG":45,"HGRMGT":15}'}
     type: ColumnPanel
@@ -201,7 +201,7 @@ components:
         color: 'theme:Primary 500', format: .0f, step: 4}
       type: form:dep_ld9bkyex0y6t8:Slider
       layout_properties: {grid_position: 'LVOTPT,LIDFVU', full_width_row: false, row_background: ''}
-      event_bindings: {change: slider_single_change, slide: slider_single_change}
+      event_bindings: {change: setting_change, slide: setting_change}
     - name: slider_multi
       properties: {pips_mode: steps, min: 1930, tooltips: true, margin: '4', pips_stepped: true,
         pips: true, max: 2022, pips_density: -1, limit: '', visible: false, connect: 'False,True,
@@ -209,7 +209,7 @@ components:
         color: 'theme:Primary 500', format: .0f, step: 4}
       type: form:dep_ld9bkyex0y6t8:Slider
       layout_properties: {grid_position: 'PHRNMA,FPOEFG'}
-      event_bindings: {change: slider_single_change, slide: slider_single_change}
+      event_bindings: {change: setting_change, slide: setting_change}
     - name: richtext_multi_select
       properties: {content: '{checkbox} {dropdown}
 
@@ -231,7 +231,7 @@ components:
           enabled: false
         type: DropDown
         layout_properties: {slot: dropdown}
-        event_bindings: {change: dropdown_multiselect_change}
+        event_bindings: {change: setting_change}
       - name: hint_multiselect
         properties: {text: Not available for this visualization, foreground: 'theme:Red',
           align: left, italic: true, spacing_below: none, spacing_above: none, visible: true}
