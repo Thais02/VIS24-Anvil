@@ -46,7 +46,7 @@ def draw_map(form, isos, nums, countries, custom, selected):
                     zmid=0 if form.radio_xg.get_group_value() in ['xg', 'xp'] else None,
                     selectedpoints = selected if selected else False,
                     colorbar_title = form.config.get('colorbar_title'),
-                    colorbar={'ticksuffix': '%', 'showticksuffix': True})
+                    colorbar={'ticksuffix': '&#37;', 'showticksuffix': True})
 
     continent = form.dropdown_continent.selected_value
     form.plot_map.layout.geo = {'showframe': form.checkbox_frame.checked, 'showcoastlines': False, 'showocean': form.checkbox_water.checked,
