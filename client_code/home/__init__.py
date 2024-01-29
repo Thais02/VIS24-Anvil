@@ -66,8 +66,8 @@ class home(homeTemplate):
         else:
             self.timer.interval = 0
             self.button_play.icon = 'fa:play'
-            self.checkbox_multiselect.enabled = True
-            self.checkbox_multiselect.tooltip = ''
+            self.checkbox_multiselect.enabled = self.radio_xg.get_group_value() != 'pos'
+            self.checkbox_multiselect.tooltip = 'Not available for this visualization' if self.radio_xg.get_group_value() != 'pos' else ''
 
     def timer_tick(self, **event_args):
         if self.slider_single.value + 4 == 1942 or self.slider_single.value + 4 == 1946:
