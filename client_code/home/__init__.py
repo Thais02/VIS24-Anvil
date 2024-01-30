@@ -171,7 +171,10 @@ class home(homeTemplate):
             self.prev_richtext = self.rich_text_side.content
 
             if self.radio_xg.get_group_value() == 'pos':
-                isos, nums, countries, _ = self.data[0][str(year)]
+                _, nums, countries, _ = self.data[0][str(year)]
+                print(self.data[2][str(year)])
+                isos = self.data[2][str(year)][str(points[0]['curve_number'])]
+                print(isos[index])
             else:
                 isos, nums, countries, _ = self.data[str(year)]
     
