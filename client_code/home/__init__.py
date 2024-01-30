@@ -123,6 +123,7 @@ class home(homeTemplate):
             self.hint_multiselect.visible = True
             self.dropdown_colorscale.items = colorscales['div']
             self.config['colorscale'] = 'RdBu'
+            self.card_colourscale.visible = True
         elif val == 'cards':
             self.card_sideplot1.visible = False
             self.card_sideplot2.visible = False
@@ -132,6 +133,7 @@ class home(homeTemplate):
             self.hint_popover.visible = False
             self.dropdown_colorscale.items = colorscales['seq']
             self.config['colorscale'] = 'Blues'
+            self.card_colourscale.visible = True
         elif val == 'pos':
             self.card_sliders.visible = True
             self.panel_settings.visible = True
@@ -147,6 +149,7 @@ class home(homeTemplate):
             self.button_play.enabled = True
             self.button_play.tooltip = ''
             self.hint_multiselect.visible = False
+            self.card_colourscale.visible = False
             self.dropdown_colorscale.items = colorscales['seq']
             self.config['colorscale'] = 'Blues'
         else:
@@ -159,6 +162,7 @@ class home(homeTemplate):
             self.hint_multiselect.visible = False
             self.dropdown_colorscale.items = colorscales['seq']
             self.config['colorscale'] = 'Blues'
+            self.card_colourscale.visible = True
         self.refresh_data_bindings()
         refresh_map(self)
 
@@ -182,7 +186,9 @@ class home(homeTemplate):
                 isos, _, countries, _ = self.data[str(year)]
                 iso = isos[index]
                 name = countries[index]
-    
+
+            print(year, iso, list(self.country_stats[str(year)][iso].items()))
+            
             try:
                 self.rich_text_side.content = f'|{name}|{year}|\n| --- | ---: |\n'
                 for key, value in self.country_stats[str(year)][iso].items():

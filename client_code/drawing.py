@@ -54,17 +54,17 @@ def draw_map(form, isos, nums, countries, custom, selected):
                     )
 
     continent = form.dropdown_continent.selected_value
-    form.plot_map.layout.geo = {'showframe': form.checkbox_frame.checked, 'showcoastlines': False, 'showocean': form.checkbox_water.checked,
+    form.plot_map.layout.geo = {'showframe': True, 'showcoastlines': False, 'showocean': form.checkbox_water.checked,
                                 'projection': {'type': form.dropdown_projection.selected_value, 'scale': continents_coordinates[continent]['scale'] if not form.checkbox_scope.checked else 1},
                                 'center': {'lat': continents_coordinates[continent]['lat'], 'lon': continents_coordinates[continent]['lon']} if not form.checkbox_scope.checked else {},
                                 'scope': continent.lower() if form.checkbox_scope.checked else 'world',
                                 'showcountries': True, 'countrywidth': 0.5, 'countrycolor': 'darkgray'
                                 }
-    form.plot_map.layout.title = form.config.get('plot_map_layout_title', '[untitled]')
+    form.plot_map.layout.title.text = form.config.get('plot_map_layout_title', '[untitled]')
     if form.checkbox_multiselect.checked and form.dropdown_multiselect.selected_value == 'show average':
-        form.plot_map.layout.title += f'<br>Average between {form.slider_multi.values[0]} and {form.slider_multi.values[1]}'
+        form.plot_map.layout.title.text += f'<br>Average between {form.slider_multi.values[0]} and {form.slider_multi.values[1]}'
     elif form.checkbox_multiselect.checked and form.dropdown_multiselect.selected_value == 'show difference':
-        form.plot_map.layout.title += f'<br>Difference between {form.slider_multi.values[0]} and {form.slider_multi.values[1]}'
+        form.plot_map.layout.title.text += f'<br>Difference between {form.slider_multi.values[0]} and {form.slider_multi.values[1]}'
     form.plot_map.data = map
 
 def draw_top5(form, top5):
@@ -89,7 +89,7 @@ def draw_top5(form, top5):
                     'cmid': 0 if form.radio_xg.get_group_value() in ['xg', 'xp'] else None,
     })
     
-    form.plot_bar.layout.title = form.config.get('plot_bar_layout_title', '[untitled]')
+    form.plot_bar.layout.title.text = form.config.get('plot_bar_layout_title', '[untitled]')
     form.plot_bar.layout.xaxis.range = [form.cmin, form.cmax]
     form.plot_bar.data = bars
 
@@ -102,7 +102,7 @@ def draw_cards_corr(form):
     form.plot_map.layout.xaxis.title = 'Year'
     form.plot_map.layout.yaxis.title = 'Average number of cards per match'
 
-    form.plot_map.layout.title = "Normalised red and yellow cards per year"
+    form.plot_map.layout.title.text = "Normalised red and yellow cards per year"
     
     form.plot_map.data = [
         go.Bar(name='Red cards', x=years, y=reds, marker={'color': '#DA291C'}),
@@ -113,7 +113,7 @@ def refresh_map(form):
     form.plot_bar.height = 300
     form.plot_map.layout.margin = margins_map
     if form.radio_xg.get_group_value() == 'pos':
-        isos, _, countries, reached_rounds,  = form.data[0][str(int(form.slider_single.value))]
+        isos, _, countries, _,  = form.data[0][str(int(form.slider_single.value))]
         form.plot_map.figure = form.data[1][str(int(form.slider_single.value))]
         selected = []
         for index, iso in enumerate(isos):
@@ -123,13 +123,12 @@ def refresh_map(form):
         for key, value in form.general_data.get(str(int(form.slider_single.value)), {}).items():
             form.rich_text_side.content += f'| **{key}** | {value} |\n'
         continent = form.dropdown_continent.selected_value
-        form.plot_map.layout.geo = {'showframe': form.checkbox_frame.checked, 'showcoastlines': False, 'showocean': form.checkbox_water.checked,
+        form.plot_map.layout.geo = {'showframe': True, 'showcoastlines': False, 'showocean': form.checkbox_water.checked,
                                     'projection': {'type': form.dropdown_projection.selected_value, 'scale': continents_coordinates[continent]['scale'] if not form.checkbox_scope.checked else 1},
                                     'center': {'lat': continents_coordinates[continent]['lat'], 'lon': continents_coordinates[continent]['lon']} if not form.checkbox_scope.checked else {},
                                     'scope': continent.lower() if form.checkbox_scope.checked else 'world',
                                     'showcountries': True, 'countrywidth': 0.5, 'countrycolor': 'darkgray'
                                     }
-        form.plot_map.layout.title = form.config.get('plot_map_layout_title', '[untitled]')
         form.plot_map.layout.margin = margins_map
         form.plot_map.redraw()
         if form.country_form:
