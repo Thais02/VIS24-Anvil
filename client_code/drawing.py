@@ -130,6 +130,8 @@ def refresh_map(form):
                                     'showcountries': True, 'countrywidth': 0.5, 'countrycolor': 'darkgray'
                                     }
         form.plot_map.layout.title = form.config.get('plot_map_layout_title', '[untitled]')
+        form.plot_map.layout.margin = margins_map
+        form.plot_map.redraw()
         if form.country_form:
             form.country_form.update(year=form.slider_multi.values if form.checkbox_multiselect.checked else int(form.slider_single.value))
     elif form.radio_xg.get_group_value() in ['xg', 'xp']:

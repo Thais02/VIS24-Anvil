@@ -163,7 +163,6 @@ class home(homeTemplate):
         refresh_map(self)
 
     def plot_map_hover(self, points, **event_args):
-        print(points)
         if self.radio_xg.get_group_value() != 'cards':
             index = points[0]['point_number']
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
@@ -171,16 +170,22 @@ class home(homeTemplate):
             self.prev_richtext = self.rich_text_side.content
 
             if self.radio_xg.get_group_value() == 'pos':
-                _, nums, countries, _ = self.data[0][str(year)]
-                print(self.data[2][str(year)])
-                isos = self.data[2][str(year)][str(points[0]['curve_number'])]
-                print(isos[index])
+                seen = 0
+                for i_r in range(6, -1, -1):
+                    if self.data[2][str(year)][str(i_r)]:
+                        if seen == points[0]['curve_number']:
+                            iso_tuples = self.data[2][str(year)][str(i_r)]
+                            iso, name = iso_tuples[index]
+                            break
+                        seen += 1
             else:
-                isos, nums, countries, _ = self.data[str(year)]
+                isos, _, countries, _ = self.data[str(year)]
+                iso = isos[index]
+                name = countries[index]
     
             try:
-                self.rich_text_side.content = f'|{countries[index]}|{year}|\n| --- | ---: |\n'
-                for key, value in self.country_stats[str(year)][isos[index]].items():
+                self.rich_text_side.content = f'|{name}|{year}|\n| --- | ---: |\n'
+                for key, value in self.country_stats[str(year)][iso].items():
                     self.rich_text_side.content += f'| **{key}** | {value} |\n'
             except:
                 pass
@@ -194,12 +199,22 @@ class home(homeTemplate):
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
             if self.radio_xg.get_group_value() == 'pos':
-                isos, nums, countries, _ = self.data[0][str(year)]
+                selected_isos = []
+                for point in points:
+                    seen = 0
+                    for i_r in range(6, -1, -1):
+                        if self.data[2][str(year)][str(i_r)]:
+                            if seen == point['curve_number']:
+                                iso_tuples = self.data[2][str(year)][str(i_r)]
+                                iso, name = iso_tuples[index]
+                                selected_isos.append(iso)
+                                break
+                            seen += 1
             else:
-                isos, nums, countries, _ = self.data[str(year)]
+                isos, _, countries, _ = self.data[str(year)]
+                indices = [point['point_number'] for point in points]
+                selected_isos = [isos[index] for index in indices]
     
-            indices = [point['point_number'] for point in points]
-            selected_isos = [isos[index] for index in indices]
             if selected_isos:
                 continents['{custom selection}'] = selected_isos
                 self.dropdown_continent.selected_value = '{custom selection}'
@@ -210,17 +225,23 @@ class home(homeTemplate):
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
             if self.radio_xg.get_group_value() == 'pos':
-                isos, nums, countries, _ = self.data[0][str(year)]
+                seen = 0
+                for i_r in range(6, -1, -1):
+                    if self.data[2][str(year)][str(i_r)]:
+                        if seen == points[0]['curve_number']:
+                            iso_tuples = self.data[2][str(year)][str(i_r)]
+                            iso, name = iso_tuples[index]
+                            break
+                        seen += 1
             else:
-                isos, nums, countries, _ = self.data[str(year)]
-    
-            iso = isos[index]
-            country = countries[index]
+                isos, _, countries, _ = self.data[str(year)]
+                iso = isos[index]
+                name = countries[index]
 
             year = self.slider_multi.values if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
             self.country_form = country_form(self.country_stats_ext.get(iso, []), self.cards_per_country.get(iso, ([], [], [])), self.multivariate.get(iso, {}),
-                               year=year, country=country)
+                               year=year, country=name)
     
             self.column_panel_1.clear()
             self.column_panel_1.add_component(self.country_form, full_width_row=True)
