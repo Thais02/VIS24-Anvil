@@ -163,13 +163,17 @@ class home(homeTemplate):
         refresh_map(self)
 
     def plot_map_hover(self, points, **event_args):
+        print(points)
         if self.radio_xg.get_group_value() != 'cards':
             index = points[0]['point_number']
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
             self.prev_richtext = self.rich_text_side.content
-            
-            isos, nums, countries, _ = self.data[str(year)]
+
+            if self.radio_xg.get_group_value() == 'pos':
+                isos, nums, countries, _ = self.data[0][str(year)]
+            else:
+                isos, nums, countries, _ = self.data[str(year)]
     
             try:
                 self.rich_text_side.content = f'|{countries[index]}|{year}|\n| --- | ---: |\n'
@@ -185,7 +189,11 @@ class home(homeTemplate):
     def plot_map_select(self, points, **event_args):
         if self.radio_xg.get_group_value() != 'cards':
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
-            isos, nums, countries, _ = self.data[str(year)]
+            
+            if self.radio_xg.get_group_value() == 'pos':
+                isos, nums, countries, _ = self.data[0][str(year)]
+            else:
+                isos, nums, countries, _ = self.data[str(year)]
     
             indices = [point['point_number'] for point in points]
             selected_isos = [isos[index] for index in indices]
@@ -198,7 +206,10 @@ class home(homeTemplate):
             index = points[0]['point_number']
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
-            isos, nums, countries, _ = self.data[str(year)]
+            if self.radio_xg.get_group_value() == 'pos':
+                isos, nums, countries, _ = self.data[0][str(year)]
+            else:
+                isos, nums, countries, _ = self.data[str(year)]
     
             iso = isos[index]
             country = countries[index]

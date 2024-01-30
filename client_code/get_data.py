@@ -41,7 +41,7 @@ def _get_vis_data(form, vis_name):  # executed in a `with Notification` block
     form.data = data
     if config:
         form.config = config
-    if vis_name not in ['cards', 'performance']:
+    if vis_name not in ['pos', 'cards']:
         form.reset_cmin_cmax()
     form.slider_single.enabled = True
     form.slider_multi.enabled = org_slider
@@ -56,7 +56,7 @@ def get_data(form, noti=True):
         form.data = data
         if config:
             form.config = config
-        if vis_name not in ['cards']:
+        if vis_name not in ['pos', 'cards']:
             form.reset_cmin_cmax()
         form.refresh_data_bindings()
         return

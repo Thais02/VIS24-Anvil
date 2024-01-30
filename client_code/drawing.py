@@ -112,7 +112,27 @@ def draw_cards_corr(form):
 def refresh_map(form):
     form.plot_bar.height = 300
     form.plot_map.layout.margin = margins_map
-    if form.radio_xg.get_group_value() in ['xg', 'xp']:
+    if form.radio_xg.get_group_value() == 'pos':
+        isos, _, countries, reached_rounds,  = form.data[0][str(int(form.slider_single.value))]
+        form.plot_map.figure = form.data[1][str(int(form.slider_single.value))]
+        selected = []
+        for index, iso in enumerate(isos):
+            if iso in continents.get(form.dropdown_continent.selected_value):
+                selected.append(index)
+        form.rich_text_side.content = f'|FIFA World Cup|{int(form.slider_single.value)}|\n| --- | ---: |\n'
+        for key, value in form.general_data.get(str(int(form.slider_single.value)), {}).items():
+            form.rich_text_side.content += f'| **{key}** | {value} |\n'
+        continent = form.dropdown_continent.selected_value
+        form.plot_map.layout.geo = {'showframe': form.checkbox_frame.checked, 'showcoastlines': False, 'showocean': form.checkbox_water.checked,
+                                    'projection': {'type': form.dropdown_projection.selected_value, 'scale': continents_coordinates[continent]['scale'] if not form.checkbox_scope.checked else 1},
+                                    'center': {'lat': continents_coordinates[continent]['lat'], 'lon': continents_coordinates[continent]['lon']} if not form.checkbox_scope.checked else {},
+                                    'scope': continent.lower() if form.checkbox_scope.checked else 'world',
+                                    'showcountries': True, 'countrywidth': 0.5, 'countrycolor': 'darkgray'
+                                    }
+        form.plot_map.layout.title = form.config.get('plot_map_layout_title', '[untitled]')
+        if form.country_form:
+            form.country_form.update(year=form.slider_multi.values if form.checkbox_multiselect.checked else int(form.slider_single.value))
+    elif form.radio_xg.get_group_value() in ['xg', 'xp']:
         isos, nums, countries, top5 = form.data['2018']
         draw_map(form, isos, nums, countries, [], False)
         draw_top5(form, top5)
@@ -128,8 +148,6 @@ def refresh_map(form):
             form.rich_text_side.content += f'| **{key}** | {int(sum(value)/len(value))} |\n'
     elif form.radio_xg.get_group_value() == 'cards':
         draw_cards_corr(form)
-    elif form.radio_xg.get_group_value() == 'performance':
-        pass
     else:
         if form.checkbox_multiselect.checked:
             if form.dropdown_multiselect.selected_value == 'show average':
