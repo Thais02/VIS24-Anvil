@@ -168,112 +168,98 @@ def total_years_per_country():
     return data
 
 
-def country_statistics_extended():
-    df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
+def country_statistics_extended(df):
+    """
+    :param df: matches_1930_2022.csv DataFrame
+    """
     data = {}  # iso : dict
     for country_name in set(df['home_team'].unique()).union(set(df['away_team'].unique())):
         # Filter matches for the specified country
         country_matches_home = df[df['home_team'] == country_name]
         country_matches_away = df[df['away_team'] == country_name]
 
-        if len(country_matches_home) == 0 or len(country_matches_away) == 0:
-            data[get_iso(country_name)] = list({
-                                               'World Cup wins': int(0),
-                                               'Finals count': int(0),
-                                               'Semi-finals count': int(0),
-                                               'Quarter-finals count': int(0),
-                                               'Total Matches': int(0),
-                                               'Total Wins': int(0),
-                                               'Total Losses': int(0),
-                                               'Total Draws': int(0),
-                                               'Goals Scored': int(0),
-                                               'Goals Conceded': int(0),
-                                               'Win-Loss Ratio': float(round(0, 2)),
-                                               'Home win-Loss Ratio': float(round(0, 2)),
-                                               'Away win-Loss Ratio': float(round(0, 2)),
-                                           }.items())
-            continue
-
         country_matches_home = country_matches_home.copy()
-        country_matches_home.loc[:, 'winner'] = country_matches_home.apply(
-            lambda row: row['home_team'] if (row['home_score'] > row['away_score']) or (
-                    row['home_score'] == row['away_score'] and row['home_penalty'] > row['away_penalty']) else
-            (row['away_team'] if (row['home_score'] < row['away_score']) or (
-                    row['home_score'] == row['away_score'] and row['home_penalty'] < row['away_penalty']) else None),
-        axis=1)
+        if len(country_matches_home) > 0:
+            country_matches_home.loc[:, 'winner'] = country_matches_home.apply(
+                lambda row: row['home_team'] if (row['home_score'] > row['away_score']) or (
+                        row['home_score'] == row['away_score'] and row['home_penalty'] > row['away_penalty']) else
+                (row['away_team'] if (row['home_score'] < row['away_score']) or (
+                        row['home_score'] == row['away_score'] and row['home_penalty'] < row['away_penalty']) else None),
+                axis=1)
 
         country_matches_away = country_matches_away.copy()
-        country_matches_away.loc[:, 'winner'] = country_matches_away.apply(
-            lambda row: row['away_team'] if (row['home_score'] < row['away_score']) or (
-                    row['home_score'] == row['away_score'] and row['home_penalty'] < row['away_penalty']) else
-            (row['home_team'] if (row['home_score'] > row['away_score']) or (
-                    row['home_score'] == row['away_score'] and row['home_penalty'] > row['away_penalty']) else None),
-            axis=1)
-
-        # Total Wins, losses, draws for Home Matches
-        total_home_wins = country_matches_home['winner'].eq(country_matches_home['home_team']).sum()
-        total_home_losses = country_matches_home['winner'].eq(country_matches_home['away_team']).sum()
-        total_home_draws = country_matches_home['winner'].isna().sum()
-
-        # Total Wins, losses, draws for Away Matches
-        total_away_wins = country_matches_away['winner'].eq(country_matches_away['away_team']).sum()
-        total_away_losses = country_matches_away['winner'].eq(country_matches_away['home_team']).sum()
-        total_away_draws = country_matches_away['winner'].isna().sum()
-
-        country_matches = pd.concat([country_matches_home, country_matches_away])
-
-        total_matches = len(country_matches)
-        total_wins = total_away_wins + total_home_wins
-        total_losses = total_home_losses + total_away_losses
-        total_draws = total_home_draws + total_away_draws
-
-        # For home matches
-        goals_scored_home = country_matches_home['home_score'].sum()
-        goals_conceded_home = country_matches_home['away_score'].sum()
-
-        # For away matches
-        goals_scored_away = country_matches_away['away_score'].sum()
-        goals_conceded_away = country_matches_away['home_score'].sum()
-
-        # Total goals scored and conceded
-        total_goals_scored = goals_scored_home + goals_scored_away
-        total_goals_conceded = goals_conceded_home + goals_conceded_away
-
-        win_loss_ratio = total_wins / total_losses if total_losses != 0 else float('inf')
-        home_win_loss_ratio = total_home_wins / total_home_losses if total_home_losses != 0 else float('inf')
-        away_win_loss_ratio = total_away_wins / total_away_losses if total_away_losses != 0 else float('inf')
-
-        # Count unique instances of 'Semi-Final'
-        semi_finals_count = country_matches.drop_duplicates(subset=['Year', 'Round'])['Round'].eq('Semi-finals').sum()
-
-        # Count unique instances of 'Quarter Final'
-        quarter_finals_count = country_matches.drop_duplicates(subset=['Year', 'Round'])['Round'].eq(
-            'Quarter-finals').sum()
-
-        # Count unique instances of 'Final'
-        unique_finals_count = country_matches.drop_duplicates(subset=['Year', 'Round'])['Round'].eq('Final') | \
-                              country_matches.drop_duplicates(subset=['Year', 'Round'])['Round'].eq('Final stage')
-        finals_count = unique_finals_count.sum()
-
-        # Count how many times the country won the World Cup (i.e., won the final)
-        world_cup_wins = country_matches[country_matches['winner'] == country_name]['Round'].eq(
-            'Final' or 'Final stage').sum()
-
-        data[get_iso(country_name)] = list({
-                                               'World Cup wins': int(world_cup_wins),
-                                               'Finals count': int(finals_count),
-                                               'Semi-finals count': int(semi_finals_count),
-                                               'Quarter-finals count': int(quarter_finals_count),
-                                               'Total Matches': int(total_matches),
-                                               'Total Wins': int(total_wins),
-                                               'Total Losses': int(total_losses),
-                                               'Total Draws': int(total_draws),
-                                               'Goals Scored': int(total_goals_scored),
-                                               'Goals Conceded': int(total_goals_conceded),
-                                               'Win-Loss Ratio': float(round(win_loss_ratio, 2)),
-                                               'Home win-Loss Ratio': float(round(home_win_loss_ratio, 2)),
-                                               'Away win-Loss Ratio': float(round(away_win_loss_ratio, 2)),
-                                           }.items())
+        if len(country_matches_away) > 0:
+            country_matches_away.loc[:, 'winner'] = country_matches_away.apply(
+                lambda row: row['away_team'] if (row['home_score'] < row['away_score']) or (
+                        row['home_score'] == row['away_score'] and row['home_penalty'] < row['away_penalty']) else
+                (row['home_team'] if (row['home_score'] > row['away_score']) or (
+                        row['home_score'] == row['away_score'] and row['home_penalty'] > row['away_penalty']) else None),
+                axis=1)
+        if len(country_matches_home) and len(country_matches_away) > 0:
+            # Total Wins, losses, draws for Home Matches
+            total_home_wins = country_matches_home['winner'].eq(country_matches_home['home_team']).sum()
+            total_home_losses = country_matches_home['winner'].eq(country_matches_home['away_team']).sum()
+            total_home_draws = country_matches_home['winner'].isna().sum()
+    
+            # Total Wins, losses, draws for Away Matches
+            total_away_wins = country_matches_away['winner'].eq(country_matches_away['away_team']).sum()
+            total_away_losses = country_matches_away['winner'].eq(country_matches_away['home_team']).sum()
+            total_away_draws = country_matches_away['winner'].isna().sum()
+    
+            country_matches = pd.concat([country_matches_home, country_matches_away])
+    
+            total_matches = len(country_matches)
+            total_wins = total_away_wins + total_home_wins
+            total_losses = total_home_losses + total_away_losses
+            total_draws = total_home_draws + total_away_draws
+    
+            # For home matches
+            goals_scored_home = country_matches_home['home_score'].sum()
+            goals_conceded_home = country_matches_home['away_score'].sum()
+    
+            # For away matches
+            goals_scored_away = country_matches_away['away_score'].sum()
+            goals_conceded_away = country_matches_away['home_score'].sum()
+    
+            # Total goals scored and conceded
+            total_goals_scored = goals_scored_home + goals_scored_away
+            total_goals_conceded = goals_conceded_home + goals_conceded_away
+    
+            win_loss_ratio = total_wins / total_losses if total_losses != 0 else float('inf')
+            home_win_loss_ratio = total_home_wins / total_home_losses if total_home_losses != 0 else float('inf')
+            away_win_loss_ratio = total_away_wins / total_away_losses if total_away_losses != 0 else float('inf')
+    
+            # Count unique instances of 'Semi-Final'
+            semi_finals_count = country_matches.drop_duplicates(subset=['Year', 'Round'])['Round'].eq('Semi-finals').sum()
+    
+            # Count unique instances of 'Quarter Final'
+            quarter_finals_count = country_matches.drop_duplicates(subset=['Year', 'Round'])['Round'].eq(
+                'Quarter-finals').sum()
+    
+            # Count unique instances of 'Final'
+            unique_finals_count = country_matches.drop_duplicates(subset=['Year', 'Round'])['Round'].eq('Final') | \
+                                country_matches.drop_duplicates(subset=['Year', 'Round'])['Round'].eq('Final stage')
+            finals_count = unique_finals_count.sum()
+    
+            # Count how many times the country won the World Cup (i.e., won the final)
+            world_cup_wins = country_matches[country_matches['winner'] == country_name]['Round'].eq(
+                'Final' or 'Final stage').sum()
+    
+            data[get_iso(country_name)] = list({
+                                                'World Cup wins': int(world_cup_wins),
+                                                'Finals count': int(finals_count),
+                                                'Semi-finals count': int(semi_finals_count),
+                                                'Quarter-finals count': int(quarter_finals_count),
+                                                'Total Matches': int(total_matches),
+                                                'Total Wins': int(total_wins),
+                                                'Total Losses': int(total_losses),
+                                                'Total Draws': int(total_draws),
+                                                'Goals Scored': int(total_goals_scored),
+                                                'Goals Conceded': int(total_goals_conceded),
+                                                'Win-Loss Ratio': float(round(win_loss_ratio, 2)),
+                                                'Home win-Loss Ratio': float(round(home_win_loss_ratio, 2)),
+                                                'Away win-Loss Ratio': float(round(away_win_loss_ratio, 2)),
+                                            }.items())
 
     return data
 

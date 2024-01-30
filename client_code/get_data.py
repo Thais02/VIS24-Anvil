@@ -11,12 +11,7 @@ def get_static_data(form):
             form.label_uplink.visible = True
         except:
             form.label_uplink.visible = False
-            try:
-                form.general_data, form.country_stats_ext, form.cards_per_country, form.multivariate = anvil.server.call('get_static_data')
-            except:
-                Notification('This visualization is not implemented by the server, ensure the uplink script is running locally',
-                                title='Not implemented by server', style='danger', timeout=0).show()
-                form.general_data, form.country_stats_ext, form.cards_per_country, form.multivariate = {}, {}, {}, {}
+            form.general_data, form.country_stats_ext, form.cards_per_country, form.multivariate = anvil.server.call('get_static_data')
         else:
             try:
                 form.general_data, form.country_stats_ext, form.cards_per_country, form.multivariate = anvil.server.call('get_static_data_uplink')
@@ -38,11 +33,7 @@ def _get_vis_data(form, vis_name):  # executed in a `with Notification` block
         form.label_uplink.visible = True
     except:
         form.label_uplink.visible = False
-        try:
-            data, config, country_stats = anvil.server.call('get_data', vis_name=vis_name)
-        except:
-            Notification('This visualization is not implemented by the server, ensure the uplink script is running locally', title='Not implemented by server', style='danger', timeout=0).show()
-            data, config, country_stats = {}, form.config, {}
+        data, config, country_stats = anvil.server.call('get_data', vis_name=vis_name)
     else:
         try:
             data, config, country_stats = anvil.server.call('get_data_uplink', vis_name=vis_name)

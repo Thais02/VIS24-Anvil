@@ -8,8 +8,7 @@ from sklearn.preprocessing import MinMaxScaler  # pip install scikit-learn
 from .get_iso import get_iso
 
 
-def calculate_performance():
-    df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
+def calculate_performance(df):
     performance_wl = {}
     performance_goals = {}
     for index, row in df.iterrows():
@@ -60,7 +59,7 @@ def calculate_performance():
                 performance_goals[away_iso] = (away_score - away_xg) - (home_score - home_xg)
 
     # standardize the scores for performance_wl using minmaxscaler.
-    scaler = MinMaxScaler(feature_range=(-1, 1))
+    scaler = MinMaxScaler(feature_range=(-100, 100))
 
     performance_wl_scores = list(performance_wl.values())
     performance_wl_scores = scaler.fit_transform(np.array(performance_wl_scores).reshape(-1, 1))
