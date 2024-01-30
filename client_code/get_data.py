@@ -18,7 +18,11 @@ def get_static_data(form):
                                 title='Not implemented by server', style='danger', timeout=0).show()
                 form.general_data, form.country_stats_ext, form.cards_per_country, form.multivariate = {}, {}, {}, {}
         else:
-            form.general_data, form.country_stats_ext, form.cards_per_country, form.multivariate = anvil.server.call('get_static_data_uplink')
+            try:
+                form.general_data, form.country_stats_ext, form.cards_per_country, form.multivariate = anvil.server.call('get_static_data_uplink')
+            except Exception as e:
+                Notification(str(e), title='Uplink script threw uncaught exception', style='danger', timeout=0).show()
+                form.general_data, form.country_stats_ext, form.cards_per_country, form.multivariate = {}, {}, {}, {}
 
 def _get_vis_data(form, vis_name):  # executed in a `with Notification` block
     org_slider = form.slider_multi.enabled
@@ -40,7 +44,11 @@ def _get_vis_data(form, vis_name):  # executed in a `with Notification` block
             Notification('This visualization is not implemented by the server, ensure the uplink script is running locally', title='Not implemented by server', style='danger', timeout=0).show()
             data, config, country_stats = {}, form.config, {}
     else:
-        data, config, country_stats = anvil.server.call('get_data_uplink', vis_name=vis_name)
+        try:
+            data, config, country_stats = anvil.server.call('get_data_uplink', vis_name=vis_name)
+        except Exception as e:
+            Notification(str(e), title='Uplink script threw uncaught exception', style='danger', timeout=0).show()
+            data, config, country_stats = {}, form.config, {}
     form.vises[vis_name] = (data, config, country_stats)
     form.data = data
     form.country_stats = country_stats
