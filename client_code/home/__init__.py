@@ -1,10 +1,11 @@
+# import framework stuff
 from ._anvil_designer import homeTemplate
 from anvil import *
 from anvil_extras import popover  # library which provides the small pop-up for the visualization hints
 
-from ..country_form import country_form
-from ..get_data import get_data, get_static_data
-from ..drawing import refresh_map, colorscales
+from ..country_form import country_form  # multivariate scatterplot, cards per country, extended country stats
+from ..get_data import get_data, get_static_data  # fetches data from (local) server
+from ..drawing import refresh_map, colorscales  # actual plotting functions
 
 hints = {
     'pos': ['Highest round reached', "This map shows which country has reached which round of that year's World Cup"],
@@ -16,6 +17,7 @@ hints = {
 
 class home(homeTemplate):
     def __init__(self, **properties):
+        # runs before the page loads
         self.vises = {}
         self.data = {}
         self.general_data = {}
@@ -39,11 +41,13 @@ class home(homeTemplate):
         self.set_hint_popover('pos')
 
     def form_show(self, **event_args):
+        # Runs once as soon as the page is loaded, fetches startup data and first visualization data
         get_static_data(form=self)
         get_data(form=self, noti=not self.label_uplink.visible)
         refresh_map(form=self)
 
     def reset_cmin_cmax(self):
+        # Calculates the max and min values present over all years, to sync the colorbar over all years
         self.cmin = 99999
         self.cmax = -99999
         for isos, nums, countries, top5 in self.data.values():
@@ -51,6 +55,7 @@ class home(homeTemplate):
             self.cmax = max(self.cmax, max(nums))
 
     def set_hint_popover(self, vis_name):
+        # Sets the pop-up on the "get more visualization info" button
         if popover.has_popover(self.hint_popover):
             popover.pop(self.hint_popover, 'destroy')
         popover.popover(self.hint_popover, hints.get(vis_name, ['Unavailable', 'No info available'])[1], title=hints.get(vis_name, ['Unavailable'])[0],
@@ -58,6 +63,7 @@ class home(homeTemplate):
         self.hint_popover.visible = True
 
     def button_play_click(self, **event_args):
+        # Handles playing/pausing the year animation
         if self.button_play.icon == 'fa:play':
             self.checkbox_multiselect.enabled = False
             self.timer.interval = 1
@@ -70,6 +76,7 @@ class home(homeTemplate):
             self.checkbox_multiselect.tooltip = 'Not available for this visualization' if self.radio_xg.get_group_value() != 'pos' else ''
 
     def timer_tick(self, **event_args):
+        # If the year animation is playing, each tick (1 second) move the slider 4 years forward and set the visualization
         if self.slider_single.value + 4 == 1942 or self.slider_single.value + 4 == 1946:
             self.slider_single.value = 1950
         elif self.slider_single.value + 4 > 2022:
@@ -79,6 +86,7 @@ class home(homeTemplate):
         refresh_map(self)
 
     def checkbox_multiselect_change(self, **event_args):
+        # Add/remove an additional handle to the year slider
         if self.checkbox_multiselect.checked:
             self.button_play.enabled = False
             self.slider_multi.values = [self.slider_single.value, min(2022, self.slider_single.value+4)]
@@ -96,9 +104,11 @@ class home(homeTemplate):
         refresh_map(self)
 
     def setting_change(self, **event_args):
+        # If any setting has changed, redraw the visualizations
         refresh_map(self)
 
     def radio_change(self, **event_args):
+        # When another visualization is selected, set all corresponding visualization-specific settings
         self.country_form = None
         self.column_panel_1.clear()
         self.up_button.visible = False
@@ -152,7 +162,7 @@ class home(homeTemplate):
             self.card_colourscale.visible = False
             self.dropdown_colorscale.items = colorscales['seq']
             self.config['colorscale'] = 'Blues'
-        else:
+        else:  # only the 'goals' visualization
             self.card_sliders.visible = True
             self.panel_settings.visible = True
             self.card_sideplot1.visible = True
@@ -167,6 +177,7 @@ class home(homeTemplate):
         refresh_map(self)
 
     def plot_map_hover(self, points, **event_args):
+        # When hovering over a country, display country-specific stats in the sidebar
         if self.radio_xg.get_group_value() != 'cards':
             index = points[0]['point_number']
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
@@ -186,8 +197,6 @@ class home(homeTemplate):
                 isos, _, countries, _ = self.data[str(year)]
                 iso = isos[index]
                 name = countries[index]
-
-            print(year, iso, list(self.country_stats[str(year)][iso].items()))
             
             try:
                 self.rich_text_side.content = f'|{name}|{year}|\n| --- | ---: |\n'
@@ -197,10 +206,12 @@ class home(homeTemplate):
                 pass
 
     def plot_map_unhover(self, points, **event_args):
+        # Reset the general statistics in the sidebar when a country is no longer hovered over
         if self.radio_xg.get_group_value() != 'cards':
             self.rich_text_side.content = self.prev_richtext
 
     def plot_map_select(self, points, **event_args):
+        # When drawing a selection, remember these countries to also select them when redrawing
         if self.radio_xg.get_group_value() != 'cards':
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
@@ -226,6 +237,7 @@ class home(homeTemplate):
                 self.dropdown_continent.selected_value = '{custom selection}'
 
     def plot_map_click(self, points, **event_args):
+        # Open the country_form for the clicked country and scroll to it
         if self.radio_xg.get_group_value() != 'cards':
             index = points[0]['point_number']
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
@@ -257,4 +269,5 @@ class home(homeTemplate):
             self.hint_maptap.visible = False
 
     def up_button_click(self, **event_args):
+        # Scroll back up to the main visualization
         self.cards_map_sides.scroll_into_view(smooth=True)

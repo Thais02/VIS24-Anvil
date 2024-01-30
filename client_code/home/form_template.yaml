@@ -209,7 +209,7 @@ components:
     - name: richtext_multi_select
       properties: {content: '{checkbox} {dropdown}
 
-          {label}', align: left}
+          {label}', align: left, spacing_below: none}
       type: RichText
       layout_properties: {grid_position: 'LAIZAT,FDOIRT'}
       components:

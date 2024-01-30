@@ -2,8 +2,11 @@ from anvil import Notification
 import anvil.server
 
 def get_static_data(form):
+    # This data is visualization-independent and only needs to be retrieved once per website visit
+    # takes some time because of the multivariate scatterplot plotting in px
     with Notification('Fetching data...\nThis can take up to 15 seconds', title='Please wait'):
         try:
+            # check if an uplink is online and give that priority if so
             anvil.server.call('ping_uplink')
             form.label_uplink.visible = True
         except:
@@ -26,19 +29,21 @@ def _get_vis_data(form, vis_name):  # executed in a `with Notification` block
     form.checkbox_multiselect.enabled = False
     form.button_play.enabled = False
     try:
+        # check if an uplink is online and give that priority if so
         anvil.server.call('ping_uplink')
         form.label_uplink.visible = True
     except:
         form.label_uplink.visible = False
         try:
-            data, config, form.country_stats = anvil.server.call('get_data', vis_name=vis_name)
+            data, config, country_stats = anvil.server.call('get_data', vis_name=vis_name)
         except:
             Notification('This visualization is not implemented by the server, ensure the uplink script is running locally', title='Not implemented by server', style='danger', timeout=0).show()
-            data, config, form.country_stats = {}, form.config, {}
+            data, config, country_stats = {}, form.config, {}
     else:
-        data, config, form.country_stats = anvil.server.call('get_data_uplink', vis_name=vis_name)
-    form.vises[vis_name] = (data, config)
+        data, config, country_stats = anvil.server.call('get_data_uplink', vis_name=vis_name)
+    form.vises[vis_name] = (data, config, country_stats)
     form.data = data
+    form.country_stats = country_stats
     if config:
         form.config = config
     if vis_name not in ['pos', 'cards']:
@@ -51,9 +56,10 @@ def _get_vis_data(form, vis_name):  # executed in a `with Notification` block
 
 def get_data(form, noti=True):
     vis_name = form.radio_xg.get_group_value()
-    if vis_name in form.vises:
-        data, config = form.vises[vis_name]
+    if vis_name in form.vises:  # if we have already retrieved this visualization-data, simply load it from our cache
+        data, config, country_stats = form.vises[vis_name]
         form.data = data
+        form.country_stats = country_stats
         if config:
             form.config = config
         if vis_name not in ['pos', 'cards']:

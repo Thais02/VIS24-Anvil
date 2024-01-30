@@ -10,6 +10,7 @@ margins_scatter = dict(l=5, r=10, b=0, t=0)
 
 class country_form(country_formTemplate):
     def __init__(self, dic, cards_data, scatter, year, country='', **properties):
+        # Runs before the form is displayed
         self.dic = dic
         self.years, self.reds, self.yellows = cards_data
         self.scatter = scatter
@@ -21,14 +22,16 @@ class country_form(country_formTemplate):
         self.update(year, full=True)
 
     def update(self, year, full=False):
+        # Redraw the visualizations, only update the selected points of that year
         self.year = year
         
         self.draw_cards_bar(year, full=full)
         self.draw_scatter(year, full=full)
 
-        self.richtext_side.content = f'|{self.country}|1930 - 2022|\n| --- | ---: |\n'
-        for key, value in self.dic:
-            self.richtext_side.content += f'| **{key}** | {value} |\n'
+        if full:
+            self.richtext_side.content = f'|{self.country}|1930 - 2022|\n| --- | ---: |\n'
+            for key, value in self.dic:
+                self.richtext_side.content += f'| **{key}** | {value} |\n'
 
     def draw_cards_bar(self, year, full):
         index = None
@@ -82,6 +85,7 @@ class country_form(country_formTemplate):
             self.plot.redraw()
 
     def find_closest_years(self, nums):
+        # As the years in the data are jittered, find the year they are closest to to know if we need to select them
         years = range(1930, 2022 + 1, 4)
         res = []
         for num in nums:
@@ -121,6 +125,7 @@ class country_form(country_formTemplate):
         self.plot_scatter.redraw()
 
     def close_button_click(self, **event_args):
+        # Delete this form from the homepage (parent)
         self.parent.parent.parent.up_button_click()
         self.parent.parent.parent.country_form = None
         self.parent.clear()
