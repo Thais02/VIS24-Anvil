@@ -13,6 +13,10 @@ components:
     type: Plot
     layout_properties: {grid_position: 'KSOJJA,NTPNQC', full_width_row: true}
     event_bindings: {}
+  - name: image_1
+    properties: {spacing_above: none, spacing_below: none, height: '100', source: _/theme/size_diff_legend.png}
+    type: Image
+    layout_properties: {grid_position: 'OBMLUD,UMQAMN', full_width_row: true}
 - name: card_1
   properties: {role: card, spacing_above: small, spacing_below: none}
   type: ColumnPanel

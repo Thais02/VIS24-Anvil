@@ -67,7 +67,7 @@ class country_form(country_formTemplate):
             self.plot.layout.xaxis.dtick = 4
             self.plot.layout.xaxis.title = 'Year'
             self.plot.layout.yaxis.title = 'Total number of cards'
-            self.plot.layout.title = {'text': f"{self.country}<br>Red and yellow cards per year", 'x': 0.5}
+            self.plot.layout.title = {'text': f"<b>{self.country}</b><br>Red and yellow cards per year", 'x': 0.5}
             
             self.plot.data = [
                 go.Bar(name='Red cards', x=self.years, y=self.reds, marker={'color': '#DA291C'}, selectedpoints=selectedpoints),
@@ -95,7 +95,7 @@ class country_form(country_formTemplate):
         if full:
             self.plot_scatter.figure = self.scatter
             self.plot_scatter.layout.margins = margins_scatter
-            self.plot_scatter.layout.title = {'text': f'{self.country}<br>Match results per year', 'x': 0.5}
+            self.plot_scatter.layout.title = {'text': f'<b>{self.country}</b><br>Match results per year', 'x': 0.5}
 
         if self.checkbox_highlight.checked:
             made_selection = False
