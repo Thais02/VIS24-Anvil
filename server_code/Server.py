@@ -16,7 +16,7 @@ from .cards_corr import get_cards_corr, country_statistics_extended, total_years
 class Config:
     def __init__(
             self,
-            colorscale='Reds',  # see https://plotly.com/python/builtin-colorscales/
+            colorscale='Greens',  # see https://plotly.com/python/builtin-colorscales/
             reversescale=False,  # reverse the colorscale
             colorbar_title='Goals',
             plot_map_layout_title='Total amount of goals scored per country',
@@ -224,7 +224,7 @@ def get_finish_data(df_full):
         dfs[year] = pd.DataFrame(
             {'isos': isos, 'reached_orders': reached_orders, 'country_names': country_names, 'Round': reached_rounds})
 
-    color_map = {k: color for k, color in zip(round_order.keys(), ['lightgrey'] + px.colors.sequential.Blues[-6:])}
+    color_map = {k: color for k, color in zip(round_order.keys(), ['lightgrey'] + px.colors.sequential.Greens[-6:])}
 
     figs = {}
     for year in range(1930, 2022 + 1, 4):

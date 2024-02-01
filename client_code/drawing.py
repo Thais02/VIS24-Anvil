@@ -39,7 +39,7 @@ def draw_map(form, isos, nums, countries, custom, selected):
             customdata.append(num)
 
     map = go.Choropleth(locations=isos, z=nums, text=countries, customdata=customdata,
-                    colorscale = form.config.get('colorscale', 'Blues'),
+                    colorscale = form.config.get('colorscale', 'Greens'),
                     hovertemplate='%{customdata}<extra>%{text}</extra>',
                     autocolorscale = False,
                     reversescale = form.config.get('reversescale', False),
@@ -82,7 +82,7 @@ def draw_top5(form, top5):
                     orientation='h',
                     marker={
                     'color': top5_x,
-                    'colorscale': form.config.get('colorscale', 'Blues'),
+                    'colorscale': form.config.get('colorscale', 'Greens'),
                     'reversescale': form.config.get('reversescale', False),
                     'cmin': form.cmin if form.radio_xg.get_group_value() not in ['xg', 'xp'] else None,
                     'cmax': form.cmax if form.radio_xg.get_group_value() not in ['xg', 'xp'] else None,

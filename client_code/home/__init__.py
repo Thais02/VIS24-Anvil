@@ -30,7 +30,7 @@ class home(homeTemplate):
         self.custom_cmin_cmax = False
         self.prev_richtext = ''
         self.config = {
-            'colorscale': 'Blues',
+            'colorscale': 'Greens',
             'reversescale': True,
             'colorbar_title': 'Goals',
             'plot_map_layout_title': 'Total amount of goals scored per country',
@@ -142,7 +142,7 @@ class home(homeTemplate):
             self.hint_maptap.visible = False
             self.hint_popover.visible = False
             self.dropdown_colorscale.items = colorscales['seq']
-            self.config['colorscale'] = 'Blues'
+            self.config['colorscale'] = 'Greens'
             self.card_colourscale.visible = True
         elif val == 'pos':
             self.card_sliders.visible = True
@@ -161,7 +161,7 @@ class home(homeTemplate):
             self.hint_multiselect.visible = False
             self.card_colourscale.visible = False
             self.dropdown_colorscale.items = colorscales['seq']
-            self.config['colorscale'] = 'Blues'
+            self.config['colorscale'] = 'Greens'
         else:  # only the 'goals' visualization
             self.card_sliders.visible = True
             self.panel_settings.visible = True
@@ -171,7 +171,7 @@ class home(homeTemplate):
             self.checkbox_multiselect.enabled = True
             self.hint_multiselect.visible = False
             self.dropdown_colorscale.items = colorscales['seq']
-            self.config['colorscale'] = 'Blues'
+            self.config['colorscale'] = 'Greens'
             self.card_colourscale.visible = True
         self.refresh_data_bindings()
         refresh_map(self)
