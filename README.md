@@ -1,1 +1,1 @@
-Anvil frontend for the https://Visualization24.nl project
+Anvil front-end for the https://Visualization24.nl project
