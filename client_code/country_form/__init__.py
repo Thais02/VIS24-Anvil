@@ -132,6 +132,6 @@ class country_form(country_formTemplate):
         del self
 
     def checkbox_highlight_change(self, **event_args):
+        self.selected = not self.checkbox_highlight.checked
         self.update(self.year)
-        if self.checkbox_highlight.checked:
-            self.selected = False
+        
