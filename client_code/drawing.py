@@ -195,13 +195,16 @@ def refresh_map(form):
                 for iso, num, country in zip(isos1, nums1, countries1):
                     isos.append(iso)
                     countries.append(country)
-                    diff = nums2[isos2.index(iso)] - num
+                    try:
+                        diff = nums2[isos2.index(iso)] - num
+                    except:
+                        diff = 0
                     nums.append(diff)
                     iso_to_name[iso] = country
                     if iso in continents.get(form.dropdown_continent.selected_value):
                         selected.append(index)
-                form.cmin = min(nums)
-                form.cmax = max(nums)
+                form.cmin = min(nums) if nums else 0
+                form.cmax = max(nums) if nums else 1
                 form.custom_cmin_cmax = True
                 form.plot_bar.height = 400
                 top5 = {}
