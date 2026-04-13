@@ -1,265 +1,240 @@
-is_package: true
-container:
-  type: HtmlTemplate
-  properties: {html: '@theme:standard-page.html'}
-  event_bindings: {show: form_show}
 components:
-- type: ColumnPanel
-  properties: {col_widths: '{}'}
-  name: content_panel
-  layout_properties: {slot: default}
-  components:
-  - name: card_5
+- components:
+  - components:
+    - event_bindings: {change: radio_change}
+      layout_properties: {grid_position: 'QNLBGI,ZJVWWB'}
+      name: radio_pos
+      properties: {align: center, bold: false, italic: false, selected: true, spacing_above: none, spacing_below: none, text: Highest round reached, tooltip: goals, underline: false, value: pos}
+      type: RadioButton
+    - event_bindings: {change: radio_change}
+      layout_properties: {grid_position: 'QNLBGI,FMAHWV'}
+      name: radio_goals
+      properties: {align: center, selected: false, spacing_above: none, spacing_below: none, text: Goals per year, tooltip: goals, value: goals}
+      type: RadioButton
+    - event_bindings: {change: radio_change}
+      layout_properties: {grid_position: 'QNLBGI,ZGHAXB'}
+      name: radio_xg
+      properties: {align: center, enabled: true, spacing_above: none, spacing_below: none, text: Goals scored vs. expected goals, value: xg}
+      type: RadioButton
+    - event_bindings: {change: radio_change}
+      layout_properties: {grid_position: 'QNLBGI,IUURYU'}
+      name: radio_xp
+      properties: {align: center, enabled: true, spacing_above: none, spacing_below: none, text: Winrate vs. expected winrate, value: xp}
+      type: RadioButton
+    - event_bindings: {change: radio_change}
+      layout_properties: {grid_position: 'QNLBGI,FROQRP'}
+      name: radio_cards
+      properties: {align: center, enabled: true, spacing_above: none, spacing_below: none, text: Cards throughout the years, value: cards}
+      type: RadioButton
+    layout_properties: {full_width_row: false, grid_position: 'VADHFB,ANIXRH'}
+    name: card_5
     properties: {role: card, spacing_above: none, spacing_below: small}
     type: ColumnPanel
-    layout_properties: {grid_position: 'VADHFB,ANIXRH', full_width_row: false}
-    components:
-    - name: radio_pos
-      properties: {selected: true, align: center, tooltip: goals, value: pos, text: Highest round reached,
-        spacing_above: none, spacing_below: none, italic: false, bold: false, underline: false}
-      type: RadioButton
-      layout_properties: {grid_position: 'QNLBGI,ZJVWWB'}
-      event_bindings: {change: radio_change}
-    - name: radio_goals
-      properties: {text: Goals per year, selected: false, value: goals, tooltip: goals,
-        spacing_above: none, spacing_below: none, align: center}
-      type: RadioButton
-      layout_properties: {grid_position: 'QNLBGI,FMAHWV'}
-      event_bindings: {change: radio_change}
-    - name: radio_xg
-      properties: {text: Goals scored vs. expected goals, spacing_above: none, spacing_below: none,
-        align: center, enabled: true, value: xg}
-      type: RadioButton
-      layout_properties: {grid_position: 'QNLBGI,ZGHAXB'}
-      event_bindings: {change: radio_change}
-    - name: radio_xp
-      properties: {text: Winrate vs. expected winrate, spacing_above: none, spacing_below: none,
-        align: center, enabled: true, value: xp}
-      type: RadioButton
-      layout_properties: {grid_position: 'QNLBGI,IUURYU'}
-      event_bindings: {change: radio_change}
-    - name: radio_cards
-      properties: {text: Cards throughout the years, align: center, spacing_above: none,
-        spacing_below: none, enabled: true, value: cards}
-      type: RadioButton
-      layout_properties: {grid_position: 'QNLBGI,FROQRP'}
-      event_bindings: {change: radio_change}
-  - name: panel_settings
-    properties: {col_widths: '{"VACGRQ":24,"WQMJJY":25,"IUZWQP":11}', spacing_below: medium}
-    type: ColumnPanel
-    layout_properties: {grid_position: 'YXXWUS,THSSBN', full_width_row: false}
-    components:
-    - name: card_7
-      properties: {role: card, col_widths: '{"CHVLJJ":15,"NDKIDN":45}', spacing_above: none,
-        spacing_below: none}
-      type: ColumnPanel
-      layout_properties: {grid_position: 'YQANLJ,WQMJJY'}
-      components:
-      - name: label_5
-        properties: {text: Map type, align: right, bold: true, font_size: 16, spacing_above: none}
+  - components:
+    - components:
+      - layout_properties: {grid_position: 'SUDVTP,CHVLJJ'}
+        name: label_5
+        properties: {align: right, bold: true, font_size: 16, spacing_above: none, text: Map type}
         type: Label
-        layout_properties: {grid_position: 'SUDVTP,CHVLJJ'}
-      - name: dropdown_projection
+      - event_bindings: {change: setting_change}
+        layout_properties: {grid_position: 'SUDVTP,NDKIDN KELOJE,JGLLZG'}
+        name: dropdown_projection
         properties:
           items: [equirectangular, orthographic, natural earth]
           spacing_above: none
         type: DropDown
-        layout_properties: {grid_position: 'SUDVTP,NDKIDN KELOJE,JGLLZG'}
-        event_bindings: {change: setting_change}
-      - name: checkbox_water
-        properties: {text: Draw oceans, spacing_above: none, spacing_below: none}
-        type: CheckBox
+      - event_bindings: {change: setting_change}
         layout_properties: {grid_position: 'SUDVTP,NDKIDN YDQYKS,SPIYHY'}
-        event_bindings: {change: setting_change}
-    - name: card_1
-      properties: {role: card, spacing_above: none, spacing_below: none}
+        name: checkbox_water
+        properties: {spacing_above: none, spacing_below: none, text: Draw oceans}
+        type: CheckBox
+      layout_properties: {grid_position: 'YQANLJ,WQMJJY'}
+      name: card_7
+      properties: {col_widths: '{"CHVLJJ":15,"NDKIDN":45}', role: card, spacing_above: none, spacing_below: none}
       type: ColumnPanel
-      layout_properties: {grid_position: 'YQANLJ,IUZWQP'}
-      components:
-      - name: label_2
-        properties: {text: 'Highlight ', spacing_above: none, spacing_below: none,
-          align: right, bold: true, font_size: 16}
+    - components:
+      - layout_properties: {grid_position: 'QNQRID,VEODDO'}
+        name: label_2
+        properties: {align: right, bold: true, font_size: 16, spacing_above: none, spacing_below: none, text: 'Highlight '}
         type: Label
-        layout_properties: {grid_position: 'QNQRID,VEODDO'}
-      - name: dropdown_continent
+      - event_bindings: {change: setting_change}
+        layout_properties: {grid_position: 'QNQRID,NZMRNP BKUQMP,AOZNTQ'}
+        name: dropdown_continent
         properties:
+          align: left
           include_placeholder: false
+          items: [World, North America, Asia, Africa, Europe, South America, Oceania, '{custom selection}']
           placeholder: ''
-          items: [World, North America, Asia, Africa, Europe, South America, Oceania,
-            '{custom selection}']
           spacing_above: none
           spacing_below: none
-          align: left
         type: DropDown
-        layout_properties: {grid_position: 'QNQRID,NZMRNP BKUQMP,AOZNTQ'}
-        event_bindings: {change: setting_change}
-      - name: checkbox_scope
-        properties: {text: Hide others, spacing_below: none, spacing_above: small}
-        type: CheckBox
+      - event_bindings: {change: setting_change}
         layout_properties: {grid_position: 'QNQRID,NZMRNP AZVXBQ,IPKLUY'}
-        event_bindings: {change: setting_change}
-    - name: card_colourscale
-      properties: {role: card, spacing_above: none, spacing_below: none, col_widths: '{"WJNHXJ":15,"XJHXCZ":45}',
-        visible: false}
+        name: checkbox_scope
+        properties: {spacing_above: small, spacing_below: none, text: Hide others}
+        type: CheckBox
+      layout_properties: {grid_position: 'YQANLJ,IUZWQP'}
+      name: card_1
+      properties: {role: card, spacing_above: none, spacing_below: none}
       type: ColumnPanel
-      layout_properties: {grid_position: 'YQANLJ,VACGRQ'}
-      components:
-      - name: label_3
-        properties: {text: Colour scale, align: right, font_size: 16, bold: true,
-          spacing_above: none}
+    - components:
+      - layout_properties: {grid_position: 'LGOPUD,WJNHXJ'}
+        name: label_3
+        properties: {align: right, bold: true, font_size: 16, spacing_above: none, text: Colour scale}
         type: Label
-        layout_properties: {grid_position: 'LGOPUD,WJNHXJ'}
-      - name: dropdown_colorscale
+      - data_bindings:
+        - {code: 'self.config[''colorscale'']', property: selected_value, writeback: true}
+        event_bindings: {change: setting_change}
+        layout_properties: {grid_position: 'LGOPUD,XJHXCZ FTTOKW,BMBXRH'}
+        name: dropdown_colorscale
         properties:
           include_placeholder: false
-          placeholder: ''
           items: ['']
+          placeholder: ''
           spacing_above: none
         type: DropDown
-        layout_properties: {grid_position: 'LGOPUD,XJHXCZ FTTOKW,BMBXRH'}
+      - data_bindings:
+        - {code: 'self.config[''reversescale'']', property: checked, writeback: true}
         event_bindings: {change: setting_change}
-        data_bindings:
-        - {property: selected_value, code: 'self.config[''colorscale'']', writeback: true}
-      - name: reversescale
-        properties: {text: Reverse colour scale, spacing_below: none, checked: true}
-        type: CheckBox
         layout_properties: {grid_position: 'LGOPUD,XJHXCZ UHSHGF,KKVDRC'}
-        event_bindings: {change: setting_change}
-        data_bindings:
-        - {property: checked, code: 'self.config[''reversescale'']', writeback: true}
-  - name: cards_map_sides
-    properties: {col_widths: '{"RSMUAG":45,"HGRMGT":15}'}
+        name: reversescale
+        properties: {checked: true, spacing_below: none, text: Reverse colour scale}
+        type: CheckBox
+      layout_properties: {grid_position: 'YQANLJ,VACGRQ'}
+      name: card_colourscale
+      properties: {col_widths: '{"WJNHXJ":15,"XJHXCZ":45}', role: card, spacing_above: none, spacing_below: none, visible: false}
+      type: ColumnPanel
+    layout_properties: {full_width_row: false, grid_position: 'YXXWUS,THSSBN'}
+    name: panel_settings
+    properties: {col_widths: '{"VACGRQ":24,"WQMJJY":25,"IUZWQP":11}', spacing_below: medium}
     type: ColumnPanel
-    layout_properties: {grid_position: 'GCGLSE,GRWHRY', full_width_row: true}
-    components:
-    - name: card_map
-      properties: {role: card, col_spacing: none, spacing_below: none, spacing_above: none,
-        col_widths: '{"LHRSJN":38,"TTFTKV":22}'}
-      type: ColumnPanel
-      layout_properties: {grid_position: 'ECTMPY,RSMUAG', full_width_row: true}
-      components:
-      - name: plot_map
-        properties: {spacing_above: none, spacing_below: none, height: '700'}
+  - components:
+    - components:
+      - event_bindings: {click: plot_map_click, hover: plot_map_hover, select: plot_map_select, unhover: plot_map_unhover}
+        layout_properties: {full_width_row: true, grid_position: 'CQZPOA,QOKRGL'}
+        name: plot_map
+        properties: {height: '700', spacing_above: none, spacing_below: none}
         type: Plot
-        layout_properties: {grid_position: 'CQZPOA,QOKRGL', full_width_row: true}
-        event_bindings: {hover: plot_map_hover, unhover: plot_map_unhover, select: plot_map_select,
-          click: plot_map_click}
-      - name: hint_maptap
-        properties: {align: center, foreground: 'theme:Primary 500', text: Try tapping a country to see more data,
-          spacing_above: none, icon_align: left, spacing_below: none, italic: false,
-          bold: false, underline: false, icon: 'fa:hand-o-up'}
+      - layout_properties: {full_width_row: true, grid_position: 'HUILBT,LHRSJN', row_background: ''}
+        name: hint_maptap
+        properties: {align: center, bold: false, foreground: 'theme:Primary 500', icon: 'fa:hand-o-up', icon_align: left, italic: false, spacing_above: none, spacing_below: none, text: Try tapping a country to see more data, underline: false}
         type: Label
-        layout_properties: {grid_position: 'HUILBT,LHRSJN', full_width_row: true,
-          row_background: ''}
-      - name: hint_popover
-        properties: {role: null, align: center, foreground: 'theme:Primary 500', text: Tap here to learn more about this visualization,
-          col_spacing: none, spacing_above: none, icon_align: left, spacing_below: none,
-          icon: 'fa:question-circle-o'}
-        type: Link
+      - event_bindings: {}
         layout_properties: {grid_position: 'HUILBT,TTFTKV'}
-        event_bindings: {}
-    - name: card_sideplot1
-      properties: {role: card, visible: false, spacing_above: none, spacing_below: small}
+        name: hint_popover
+        properties: {align: center, col_spacing: none, foreground: 'theme:Primary 500', icon: 'fa:question-circle-o', icon_align: left, role: null, spacing_above: none, spacing_below: none, text: Tap here to learn more about this visualization}
+        type: Link
+      layout_properties: {full_width_row: true, grid_position: 'ECTMPY,RSMUAG'}
+      name: card_map
+      properties: {col_spacing: none, col_widths: '{"LHRSJN":38,"TTFTKV":22}', role: card, spacing_above: none, spacing_below: none}
       type: ColumnPanel
-      layout_properties: {grid_position: 'ECTMPY,HGRMGT DJSHCG,JQQEUG', full_width_row: true}
-      components:
-      - name: plot_bar
+    - components:
+      - layout_properties: {full_width_row: true, grid_position: 'CVFXOR,HCVPNV'}
+        name: plot_bar
         properties: {height: '300', spacing_above: none, spacing_below: none, visible: true}
         type: Plot
-        layout_properties: {grid_position: 'CVFXOR,HCVPNV', full_width_row: true}
-    - name: card_sideplot2
-      properties: {role: card}
+      layout_properties: {full_width_row: true, grid_position: 'ECTMPY,HGRMGT DJSHCG,JQQEUG'}
+      name: card_sideplot1
+      properties: {role: card, spacing_above: none, spacing_below: small, visible: false}
       type: ColumnPanel
-      layout_properties: {grid_position: 'ECTMPY,HGRMGT RUBPJQ,KYCEXI', full_width_row: true}
-      components:
-      - name: rich_text_side
+    - components:
+      - layout_properties: {full_width_row: true, grid_position: 'SRWHWC,HGZORL'}
+        name: rich_text_side
         properties: {spacing_above: none, spacing_below: none}
         type: RichText
-        layout_properties: {grid_position: 'SRWHWC,HGZORL', full_width_row: true}
-  - name: timer
+      layout_properties: {full_width_row: true, grid_position: 'ECTMPY,HGRMGT RUBPJQ,KYCEXI'}
+      name: card_sideplot2
+      properties: {role: card}
+      type: ColumnPanel
+    layout_properties: {full_width_row: true, grid_position: 'GCGLSE,GRWHRY'}
+    name: cards_map_sides
+    properties: {col_widths: '{"RSMUAG":45,"HGRMGT":15}'}
+    type: ColumnPanel
+  - event_bindings: {tick: timer_tick}
+    layout_properties: {grid_position: 'ANSSAX,CDBEQB UDLNGK,HBMLWI'}
+    name: timer
     properties: {interval: 0}
     type: Timer
-    layout_properties: {grid_position: 'ANSSAX,CDBEQB UDLNGK,HBMLWI'}
-    event_bindings: {tick: timer_tick}
-  - name: card_sliders
-    properties: {role: card, col_widths: '{"FDOIRT":17,"QMITNI":43}'}
-    type: ColumnPanel
-    layout_properties: {grid_position: 'RPBTWN,DYNAXB', full_width_row: true}
-    components:
-    - name: spacer_1
+  - components:
+    - layout_properties: {grid_position: 'OZSDIE,RDAAIS'}
+      name: spacer_1
       properties: {height: '20'}
       type: Spacer
-      layout_properties: {grid_position: 'OZSDIE,RDAAIS'}
-    - name: slider_single
-      properties: {pips_mode: steps, min: 1930, tooltips: true, margin: '4', pips_stepped: true,
-        pips: true, max: 2022, enabled: false, pips_density: -1, limit: '', connect: 'True,
-          False', start: '1930', behaviour: tap, handle_size: '24', spacing_above: small,
-        color: 'theme:Primary 500', format: .0f, step: 4}
+    - event_bindings: {change: setting_change, slide: setting_change}
+      layout_properties: {full_width_row: false, grid_position: 'LVOTPT,LIDFVU', row_background: ''}
+      name: slider_single
+      properties: {behaviour: tap, color: 'theme:Primary 500', connect: 'True, False', enabled: false, format: .0f, handle_size: '24', limit: '', margin: '4', max: 2022, min: 1930, pips: true, pips_density: -1, pips_mode: steps, pips_stepped: true, spacing_above: small, start: '1930', step: 4, tooltips: true}
       type: form:dep_ld9bkyex0y6t8:Slider
-      layout_properties: {grid_position: 'LVOTPT,LIDFVU', full_width_row: false, row_background: ''}
-      event_bindings: {change: setting_change, slide: setting_change}
-    - name: slider_multi
-      properties: {pips_mode: steps, min: 1930, tooltips: true, margin: '4', pips_stepped: true,
-        pips: true, max: 2022, pips_density: -1, limit: '', visible: false, connect: 'False,True,
-          False', start: '1930,1934', behaviour: tap, handle_size: '24', spacing_above: small,
-        color: 'theme:Primary 500', format: .0f, step: 4}
-      type: form:dep_ld9bkyex0y6t8:Slider
+    - event_bindings: {change: setting_change, slide: setting_change}
       layout_properties: {grid_position: 'PHRNMA,FPOEFG'}
-      event_bindings: {change: setting_change, slide: setting_change}
-    - name: richtext_multi_select
-      properties: {content: '{checkbox} {dropdown}
-
-          {label}', align: left, spacing_below: none}
-      type: RichText
-      layout_properties: {grid_position: 'LAIZAT,FDOIRT'}
-      components:
-      - name: checkbox_multiselect
-        properties: {text: Multi-select, checked: false, enabled: false, align: center,
-          spacing_above: none, spacing_below: none, bold: true, font_size: 16}
-        type: CheckBox
+      name: slider_multi
+      properties: {behaviour: tap, color: 'theme:Primary 500', connect: 'False,True, False', format: .0f, handle_size: '24', limit: '', margin: '4', max: 2022, min: 1930, pips: true, pips_density: -1, pips_mode: steps, pips_stepped: true, spacing_above: small, start: '1930,1934', step: 4, tooltips: true, visible: false}
+      type: form:dep_ld9bkyex0y6t8:Slider
+    - components:
+      - event_bindings: {change: checkbox_multiselect_change}
         layout_properties: {slot: checkbox}
-        event_bindings: {change: checkbox_multiselect_change}
-      - name: dropdown_multiselect
+        name: checkbox_multiselect
+        properties: {align: center, bold: true, checked: false, enabled: false, font_size: 16, spacing_above: none, spacing_below: none, text: Multi-select}
+        type: CheckBox
+      - event_bindings: {change: setting_change}
+        layout_properties: {slot: dropdown}
+        name: dropdown_multiselect
         properties:
+          enabled: false
           items: [show average, show difference]
           spacing_above: none
           spacing_below: none
-          enabled: false
         type: DropDown
-        layout_properties: {slot: dropdown}
-        event_bindings: {change: setting_change}
-      - name: hint_multiselect
-        properties: {text: Not available for this visualization, foreground: 'theme:Red',
-          align: left, italic: true, spacing_below: none, spacing_above: none, visible: true}
+      - layout_properties: {slot: label}
+        name: hint_multiselect
+        properties: {align: left, foreground: 'theme:Red', italic: true, spacing_above: none, spacing_below: none, text: Not available for this visualization, visible: true}
         type: Label
-        layout_properties: {slot: label}
-    - name: button_play
-      properties: {text: '', icon: 'fa:play', bold: false, font_size: 25, enabled: true,
-        align: center}
-      type: Button
+      layout_properties: {grid_position: 'LAIZAT,FDOIRT'}
+      name: richtext_multi_select
+      properties:
+        align: left
+        content: |-
+          {checkbox} {dropdown}
+          {label}
+        spacing_below: none
+      type: RichText
+    - event_bindings: {click: button_play_click}
       layout_properties: {grid_position: 'LAIZAT,QMITNI'}
-      event_bindings: {click: button_play_click}
-  - name: column_panel_1
+      name: button_play
+      properties: {align: center, bold: false, enabled: true, font_size: 25, icon: 'fa:play', text: ''}
+      type: Button
+    layout_properties: {full_width_row: true, grid_position: 'RPBTWN,DYNAXB'}
+    name: card_sliders
+    properties: {col_widths: '{"FDOIRT":17,"QMITNI":43}', role: card}
+    type: ColumnPanel
+  - layout_properties: {full_width_row: true, grid_position: 'CZEJNA,SKTTCO'}
+    name: column_panel_1
     properties: {}
     type: ColumnPanel
-    layout_properties: {grid_position: 'CZEJNA,SKTTCO', full_width_row: true}
-  - name: up_button
-    properties: {text: Back to map, icon: 'fa:angle-double-up', icon_align: top, spacing_below: small,
-      align: full, role: null, visible: false}
+  - event_bindings: {click: up_button_click}
+    layout_properties: {full_width_row: true, grid_position: 'IXTFXV,AOUEOW'}
+    name: up_button
+    properties: {align: full, icon: 'fa:angle-double-up', icon_align: top, role: null, spacing_below: small, text: Back to map, visible: false}
     type: Button
-    layout_properties: {grid_position: 'IXTFXV,AOUEOW', full_width_row: true}
-    event_bindings: {click: up_button_click}
-- type: FlowPanel
-  properties: {}
-  name: navbar_links
-  layout_properties: {slot: nav-right}
-  components:
-  - name: label_uplink
-    properties: {text: Local script connected, visible: false, icon: 'fa:chain', spacing_above: none,
-      spacing_below: none, bold: false, underline: false}
+  layout_properties: {slot: default}
+  name: content_panel
+  properties: {col_widths: '{}'}
+  type: ColumnPanel
+- components:
+  - layout_properties: {expand: false}
+    name: label_uplink
+    properties: {bold: false, icon: 'fa:chain', spacing_above: none, spacing_below: none, text: Local script connected, underline: false, visible: false}
     type: Label
-    layout_properties: {expand: false}
-- name: label_4
-  properties: {text: Visualization group 24, spacing_above: none, spacing_below: none}
+  layout_properties: {slot: nav-right}
+  name: navbar_links
+  properties: {}
+  type: FlowPanel
+- layout_properties: {slot: title}
+  name: label_4
+  properties: {spacing_above: none, spacing_below: none, text: Visualization group 24}
   type: Label
-  layout_properties: {slot: title}
+container:
+  event_bindings: {show: form_show}
+  properties: {html: '@theme:standard-page.html'}
+  type: HtmlTemplate
+is_package: true

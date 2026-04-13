@@ -30,7 +30,7 @@ class Config:
 
 
 def prep_dfs():
-    df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv')
+    df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv', on_bad_lines='skip')
 
     # map old country names to new ones
     country_dict = {
@@ -179,6 +179,8 @@ def get_finish_data(df_full):
     df_full.loc[df_full[
                     'Round'] == 'Final stage', 'Round'] = 'Final'  # 1950 special case (winner determined over multiple games)
 
+    df_full['Round'] = df_full['Round'].fillna('Did not participate')
+    
     data = {}  # {year: (country_iso's, reached_order, country_names, reached_rounds)}
     more_data = {}  # year : { round_number : [isos] }
     dfs = {}  # year : pd.DataFrame (for plotting)
@@ -205,7 +207,7 @@ def get_finish_data(df_full):
             iso, name = get_iso_name(country_name)
             isos.append(iso)
             reached_orders.append(max(reached_order))
-            country_names.append(name)
+            country_names.append(name if name is not None else 'Unknown')
             reached_rounds.append(reached_round[max_i])
             more_data_year[str(max(reached_order))].append((iso, name))
 
@@ -215,9 +217,10 @@ def get_finish_data(df_full):
             if iso not in blacklist and iso not in isos:
                 isos.append(iso)
                 reached_orders.append(0)
-                country_names.append(get_name(iso))
+                n = get_name(iso)
+                country_names.append(n if n is not None else 'Unknown')
                 reached_rounds.append('Did not participate')
-                more_data_year['0'].append((iso, get_name(iso)))
+                more_data_year['0'].append((iso, n if n is not None else 'Unknown'))
 
         data[str(year)] = (isos, reached_orders, country_names, reached_rounds)
         more_data[str(year)] = more_data_year
@@ -281,7 +284,7 @@ def get_scatter_data(df):
                   (df_new['away_score'] > df_new['home_score']) | (df_new['away_penalty'] > df_new['home_penalty']),
                   (df_new['home_score'] == df_new['away_score']) & (np.isnan(df_new['home_penalty']))]
     choices = ['Win', 'Loss', 'Draw']
-    df_new['Outcome'] = np.select(conditions, choices)
+    df_new['Outcome'] = np.select(conditions, choices, default='Unknown')
 
     # Create new column which contains the goal difference of the match
     conditions2 = [df_new['home_penalty'].notnull(), df_new['home_penalty'].isnull()]

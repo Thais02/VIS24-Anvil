@@ -40,13 +40,18 @@ def get_iso(country_name):
         'Soviet Union': 'RUS',
     }
     try:
-        iso = pycountry.countries.get(name=country_name).alpha_3
+        country = pycountry.countries.get(name=country_name)
+        if country:
+            return country.alpha_3
+        else:
+            return isos.get(country_name, 'UNK')
     except:
-        iso = isos.get(country_name)
-    return iso
+        return isos.get(country_name, 'UNK')
 
 
 def get_name(iso):
+    if iso is None or iso == 'UNK':
+        return 'Unknown'
     try:
         # try common_name first if it exists, else name
         name = pycountry.countries.get(alpha_3=iso).common_name
