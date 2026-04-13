@@ -1,16 +1,20 @@
+allow_embedding: true
 dependencies:
 - dep_id: dep_ld9bkyex0y6t8
-  version: {dev: false}
   resolution_hints: {app_id: C6ZZPAPN4YYF5NVJ, name: Anvil Extras, package_name: anvil_extras}
-services:
-- source: /runtime/services/tables.yml
-  client_config: {}
-  server_config: {}
-startup: {type: form, module: home}
-package_name: VIS24
-allow_embedding: false
+  version: {dev: false}
+metadata: {description: Group 24's submission for the course Visualization at the TU/e 2023-2024, logo_img: 'asset:favicon_vis24_v2.png', title: Visualization 24}
 name: VIS24
-runtime_options: {version: 2, client_version: '3', server_version: python3-full, server_spec: null}
-metadata: {title: Visualization 24, logo_img: 'asset:favicon_vis24_v2.png', description: Group 24's submission for the course Visualization at the TU/e 2023-2024}
+package_name: VIS24
+runtime_options:
+  client_version: '3'
+  server_spec: {base: python310-standard}
+  server_version: python3-full
+  version: 2
+services:
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/tables.yml
+startup: {module: home, type: form}
 startup_form: null
 uplink_visible: true
