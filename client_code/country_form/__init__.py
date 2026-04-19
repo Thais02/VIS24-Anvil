@@ -13,6 +13,9 @@ class country_form(country_formTemplate):
         # Runs before the form is displayed
         self.dic = dic
         self.years, self.reds, self.yellows = cards_data
+        self.years = [int(y) for y in self.years]
+        self.reds = [float(r) for r in self.reds]
+        self.yellows = [float(y) for y in self.yellows]
         self.scatter = scatter
         self.country = country
         self.closest_years = {0: [], 1: [], 2: []}  # data_index : [closest_years xaxis-values]
@@ -88,7 +91,7 @@ class country_form(country_formTemplate):
         years = range(1930, 2022 + 1, 4)
         res = []
         for num in nums:
-            res.append(min(years, key=lambda year: abs(year - num)))
+            res.append(min(years, key=lambda year: abs(year - float(num))))
         return res
     
     def draw_scatter(self, year, full):

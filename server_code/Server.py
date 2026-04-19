@@ -367,6 +367,15 @@ def get_country_stats(vis_name, df_full):
     :param vis_name: name of the requested visualization data, corresponds to the radio buttons on the website
     :param df_full: matches_1930_2022.csv DataFrame
     """
+    def safe_get(df_subset, col):
+        """Extract a single scalar value from a DataFrame column, or return 'N/A'."""
+        try:
+            val = df_subset[col].iloc[0]
+            return str(val) if pd.notna(val) else 'N/A'
+        except (IndexError, KeyError):
+            return 'N/A'
+
+    
     data = {}  # {year: {country_iso: {keys: values}}}
 
     for year in range(1930, 2022 + 1, 4):
@@ -387,19 +396,15 @@ def get_country_stats(vis_name, df_full):
 
         for country_name in all_country_names:
             # find team manager and captain, assumes consistency within year
-            try:
-                row = df[df['away_team'] == country_name].iloc[0]
-            except:
-                row = df[df['away_team'] == country_name]
-            manager = row['away_manager']
-            captain = row['away_captain']
-            if not isinstance(manager, str):
-                try:
-                    row = df[df['home_team'] == country_name].iloc[0]
-                except:
-                    row = df[df['home_team'] == country_name]
-                manager = row['home_manager']
-                captain = row['home_captain']
+            away_rows = df[df['away_team'] == country_name]
+            home_rows = df[df['home_team'] == country_name]
+            
+            manager = safe_get(away_rows, 'away_manager')
+            captain = safe_get(away_rows, 'away_captain')
+            
+            if manager == 'N/A':
+                manager = safe_get(home_rows, 'home_manager')
+                captain = safe_get(home_rows, 'home_captain')
 
             country_dict = {'Total matches': counter_home.get(country_name, 0) + counter_away.get(country_name, 0),
                             'Home matches': counter_home.get(country_name, 0),
