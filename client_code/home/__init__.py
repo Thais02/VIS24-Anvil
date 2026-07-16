@@ -179,7 +179,7 @@ class home(homeTemplate):
     def plot_map_hover(self, points, **event_args):
         # When hovering over a country, display country-specific stats in the sidebar
         if self.radio_xg.get_group_value() != 'cards':
-            index = points[0]['point_number']
+            index = int(points[0]['point_number'])
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
             self.prev_richtext = self.rich_text_side.content
@@ -223,7 +223,7 @@ class home(homeTemplate):
                         if self.data[2][str(year)][str(i_r)]:
                             if seen == point['curve_number']:
                                 iso_tuples = self.data[2][str(year)][str(i_r)]
-                                iso, name = iso_tuples[index]
+                                iso, name = iso_tuples[int(point['point_number'])]
                                 selected_isos.append(iso)
                                 break
                             seen += 1
@@ -239,7 +239,7 @@ class home(homeTemplate):
     def plot_map_click(self, points, **event_args):
         # Open the country_form for the clicked country and scroll to it
         if self.radio_xg.get_group_value() != 'cards':
-            index = points[0]['point_number']
+            index = int(points[0]['point_number'])
             year = int(self.slider_multi.value) if self.checkbox_multiselect.checked else int(self.slider_single.value)
             
             if self.radio_xg.get_group_value() == 'pos':
