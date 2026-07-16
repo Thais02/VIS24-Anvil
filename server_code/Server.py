@@ -7,6 +7,7 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 from collections import Counter
+import base64
 
 from .get_iso import get_iso, get_name, get_iso_name
 from .xpectedvsreality import calculate_performance
@@ -29,20 +30,30 @@ class Config:
         self.plot_bar_layout_title = plot_bar_layout_title
 
 
+def _decode_bdata_dict(d):
+    """Decode a Plotly {'dtype': ..., 'bdata': ...} typed-array dict into a plain list."""
+    raw = base64.b64decode(d['bdata'])
+    dtype = d.get('dtype', 'f8')
+    arr = np.frombuffer(raw, dtype=dtype)
+    if 'shape' in d:
+        shape = tuple(int(s) for s in str(d['shape']).split(','))
+        arr = arr.reshape(shape)
+    return arr.tolist()
+
 def _sanitize_fig_dict(fig_dict):
-    """
-    Recursively convert numpy arrays in a Plotly figure dict into native Python
-    lists, so Anvil serializes them as normal JSON arrays instead of binary
-    typed-array ('bdata') blobs that the client can't decode.
-    """
     for trace in fig_dict.get('data', []):
         for key, value in list(trace.items()):
             if isinstance(value, np.ndarray):
                 trace[key] = value.tolist()
             elif isinstance(value, dict):
-                for subkey, subvalue in list(value.items()):
-                    if isinstance(subvalue, np.ndarray):
-                        value[subkey] = subvalue.tolist()
+                if 'bdata' in value:
+                    trace[key] = _decode_bdata_dict(value)
+                else:
+                    for subkey, subvalue in list(value.items()):
+                        if isinstance(subvalue, np.ndarray):
+                            value[subkey] = subvalue.tolist()
+                        elif isinstance(subvalue, dict) and 'bdata' in subvalue:
+                            value[subkey] = _decode_bdata_dict(subvalue)
     return fig_dict
 
 
