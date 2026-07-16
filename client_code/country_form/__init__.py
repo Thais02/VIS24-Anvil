@@ -3,8 +3,6 @@ from anvil import *
 import anvil.server
 
 import plotly.graph_objects as go
-import base64
-import numpy as np
 
 from ..drawing import margins_bar
 
