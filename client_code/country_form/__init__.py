@@ -109,13 +109,7 @@ class country_form(country_formTemplate):
                 if not self.closest_years[data_index]:
                     x_vals = data['x']
                     if isinstance(x_vals, dict):
-                        if 'bdata' in x_vals:
-                            # Decode the base64-encoded typed array into real floats
-                            raw_bytes = base64.b64decode(x_vals['bdata'])
-                            dtype = x_vals.get('dtype', 'f8')
-                            x_vals = np.frombuffer(raw_bytes, dtype=dtype).tolist()
-                        else:
-                            x_vals = list(x_vals.values())
+                        x_vals = list(x_vals.values())
                     self.closest_years[data_index] = self.find_closest_years(x_vals)
                 if isinstance(year, int):
                     for index, closest_year in enumerate(self.closest_years[data_index]):

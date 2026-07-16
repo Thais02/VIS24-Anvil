@@ -144,7 +144,7 @@ def refresh_map(form):
                     lst = general_data.get(key, [])
                     lst.append(value)
                     general_data[key] = lst
-        form.rich_text_side.content = f'|FIFA World Cup|2018 - 2022|\n| --- | ---: |\n'
+        form.rich_text_side.content = '|FIFA World Cup|2018 - 2022|\n| --- | ---: |\n'
         for key, value in general_data.items():
             form.rich_text_side.content += f'| **{key}** | {int(sum(value)/len(value))} |\n'
     elif form.radio_xg.get_group_value() == 'cards':

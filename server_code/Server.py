@@ -29,6 +29,23 @@ class Config:
         self.plot_bar_layout_title = plot_bar_layout_title
 
 
+def _sanitize_fig_dict(fig_dict):
+    """
+    Recursively convert numpy arrays in a Plotly figure dict into native Python
+    lists, so Anvil serializes them as normal JSON arrays instead of binary
+    typed-array ('bdata') blobs that the client can't decode.
+    """
+    for trace in fig_dict.get('data', []):
+        for key, value in list(trace.items()):
+            if isinstance(value, np.ndarray):
+                trace[key] = value.tolist()
+            elif isinstance(value, dict):
+                for subkey, subvalue in list(value.items()):
+                    if isinstance(subvalue, np.ndarray):
+                        value[subkey] = subvalue.tolist()
+    return fig_dict
+
+
 def prep_dfs():
     df = pd.read_csv(anvil.server.get_app_origin() + '/_/theme/matches_1930_2022.csv', on_bad_lines='skip')
 
@@ -237,7 +254,7 @@ def get_finish_data(df_full):
                           hovertemplate='%{customdata[0]}<extra>%{customdata[1]}</extra>')
         fig.update_layout(title_text='Highest round reached', title_x=0.5)
 
-        figs[str(year)] = fig.to_dict()
+        figs[str(year)] = _sanitize_fig_dict(fig.to_dict())
 
     config = Config(
         plot_map_layout_title='Highest round reached',
@@ -348,7 +365,7 @@ def get_scatter_data(df):
             yaxis_title="Round"
         )
 
-        data[get_iso(country_name)] = fig.to_dict()
+        data[get_iso(country_name)] = _sanitize_fig_dict(fig.to_dict())
 
     return data
 
