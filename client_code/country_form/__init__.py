@@ -3,6 +3,8 @@ from anvil import *
 import anvil.server
 
 import plotly.graph_objects as go
+import base64
+import numpy as np
 
 from ..drawing import margins_bar
 
@@ -100,8 +102,6 @@ class country_form(country_formTemplate):
             self.plot_scatter.layout.margins = margins_scatter
             self.plot_scatter.layout.title = {'text': f'<b>{self.country}</b><br>Match results per year', 'x': 0.5}
 
-        
-        
         if self.checkbox_highlight.checked:
             made_selection = False
             selected = {0: [], 1: [], 2: []}
@@ -109,8 +109,13 @@ class country_form(country_formTemplate):
                 if not self.closest_years[data_index]:
                     x_vals = data['x']
                     if isinstance(x_vals, dict):
-                        # Anvil serialized the typed array; extract the actual list
-                        x_vals = list(x_vals.values()) if 'bdata' not in x_vals else x_vals['bdata']
+                        if 'bdata' in x_vals:
+                            # Decode the base64-encoded typed array into real floats
+                            raw_bytes = base64.b64decode(x_vals['bdata'])
+                            dtype = x_vals.get('dtype', 'f8')
+                            x_vals = np.frombuffer(raw_bytes, dtype=dtype).tolist()
+                        else:
+                            x_vals = list(x_vals.values())
                     self.closest_years[data_index] = self.find_closest_years(x_vals)
                 if isinstance(year, int):
                     for index, closest_year in enumerate(self.closest_years[data_index]):
