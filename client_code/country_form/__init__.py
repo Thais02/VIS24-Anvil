@@ -2,9 +2,24 @@ from ._anvil_designer import country_formTemplate
 from anvil import *
 import anvil.server
 
+import base64
+import struct
+
 import plotly.graph_objects as go
 
 from ..drawing import margins_bar
+
+
+def _decode_bdata(x_vals):
+    raw = base64.b64decode(x_vals['bdata'])
+    dtype = x_vals.get('dtype', 'f8')
+    fmt_map = {'f8': 'd', 'f4': 'f', 'i1': 'b', 'u1': 'B',
+               'i2': 'h', 'u2': 'H', 'i4': 'i', 'u4': 'I',
+               'i8': 'q', 'u8': 'Q'}
+    fmt_char = fmt_map.get(dtype, 'd')
+    count = len(raw) // struct.calcsize(fmt_char)
+    return list(struct.unpack(f'<{count}{fmt_char}', raw))
+
 
 margins_scatter = dict(l=5, r=10, b=0, t=0)
 
@@ -107,7 +122,10 @@ class country_form(country_formTemplate):
                 if not self.closest_years[data_index]:
                     x_vals = data['x']
                     if isinstance(x_vals, dict):
-                        x_vals = list(x_vals.values())
+                        if 'bdata' in x_vals:
+                            x_vals = _decode_bdata(x_vals)
+                        else:
+                            x_vals = list(x_vals.values())
                     self.closest_years[data_index] = self.find_closest_years(x_vals)
                 if isinstance(year, int):
                     for index, closest_year in enumerate(self.closest_years[data_index]):
