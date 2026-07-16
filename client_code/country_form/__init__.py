@@ -109,7 +109,6 @@ class country_form(country_formTemplate):
                     x_vals = data['x']
                     if isinstance(x_vals, dict):
                         x_vals = list(x_vals.values())
-                    print(x_vals)
                     self.closest_years[data_index] = self.find_closest_years(x_vals)
                 if isinstance(year, int):
                     for index, closest_year in enumerate(self.closest_years[data_index]):
